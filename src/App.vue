@@ -29,7 +29,6 @@ export default {
 </script>
 
 <template>
-  <span v-if="user.id">Rol: {{ user.role }}</span>
   <nav class="container mx-auto relative py-4 flex justify-between items-center bg-white">
     <div class="w-full px-4">
       <div class="relative flex h-16 items-center justify-between">
