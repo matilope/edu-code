@@ -1,6 +1,7 @@
 <script>
 import { subscribeToService } from "../services/services.js";
 import { dateToString } from "../helpers/date.js";
+import { numberToCurrency } from "../helpers/price.js";
 
 export default {
   name: "Services",
@@ -16,6 +17,9 @@ export default {
     formatDate(date) {
       return dateToString(date);
     },
+    formatPrice(price) {
+      return numberToCurrency(price);
+    }
   },
   async mounted() {
     this.loading = true;
@@ -23,7 +27,9 @@ export default {
       this.unsubscribeServices = subscribeToService(
         (newServices) => (this.services = newServices)
       );
-    } catch (err) {}
+    } catch (err) {
+      this.$router.push("/");
+    }
     this.loading = false;
   },
   unmounted() {
@@ -33,12 +39,27 @@ export default {
 </script>
 
 <template>
-  <article v-for="service in services" class="" :key="service.id">
-    <h2>{{ service.title }}</h2>
-    <p>{{ service.description }}</p>
-    <span>{{ service.duration }}</span>
-    <p>{{ formatDate(service.created_at) }}</p>
-  </article>
+  <section>
+    <h1 class="text-3xl md:text-4xl lg:text-5xl mb-8">Cursos</h1>
+    <div class="services">
+      <article class="max-w-sm rounded overflow-hidden shadow-lg" v-for="service in services" :key="service.id">
+        <img class="w-full" src="images/default.jpg" :alt="service.title">
+        <div class="px-6 py-4">
+          <h2 class="font-bold text-xl mb-2" :title="service.title">{{ service.title }}</h2>
+          <p class="text-gray-700 text-base">
+            {{ service.description }}
+          </p>
+          <span class="price">{{ formatPrice(service.price) }}</span>
+          <span class="date inline-block bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800">{{ formatDate(service.created_at) }}</span>
+        </div>
+        <div class="px-6 pt-4 pb-2">
+          <span class="inline-block bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 mr-2 mb-2">{{ service.level }}</span>
+          <span class="inline-block bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 mr-2 mb-2">{{ service.technologies }}</span>
+          <span class="inline-block bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 mr-2 mb-2">{{ service.duration }} horas</span>
+        </div>
+      </article>
+    </div>
+  </section>
 </template>
 
 <style lang="scss" scoped></style>

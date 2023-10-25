@@ -36,10 +36,7 @@ export default {
   },
   methods: {
     sendMessage() {
-      if(!this.newMessage){
-        alert("Tiene que haber un mensaje");
-        return;
-      }
+      if(!this.newMessage) return;
       sendPrivateMessage({
         senderId: this.authUser.id,
         receiverId: this.user.id,
@@ -78,7 +75,7 @@ export default {
         (newMessages) => (this.messages = newMessages)
       );
     } catch (err) {
-      alert("Ha ocurrido un error");
+      this.$router.push("/perfil");
     } finally {
       this.loading = false;
       this.messagesLoading = false;

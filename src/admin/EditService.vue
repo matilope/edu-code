@@ -4,6 +4,7 @@ import PrimaryInput from "../components/PrimaryInput.vue";
 import PrimaryLabel from "../components/PrimaryLabel.vue";
 import PrimaryTextarea from "../components/PrimaryTextarea.vue";
 import { getServiceById, editService, } from "../services/services.js";
+import { modalAlert } from "../helpers/modal.js";
 
 export default {
   name: "EditeService",
@@ -33,10 +34,10 @@ export default {
         const newService = await editService(this.service.id, {...this.service});
         if (newService) {
           this.loading = false;
-          this.$router.push("/servicios");
+          this.$router.push("/admin/cursos");
         }
       } catch (err) {
-        console.log("err", err);
+        modalAlert("Ha ocurrido un error", "error");
       } finally {
         this.loading = false;
       }
@@ -46,8 +47,12 @@ export default {
     this.loading = true;
     try {
       this.service = await getServiceById(this.$route.params.id);
-    } catch (err) {}
-    this.loading = false;
+    } catch (err) {
+      this.$router.push("/admin/cursos");
+    }
+    finally {
+      this.loading = false;
+    }
   }
 };
 </script>
@@ -56,7 +61,7 @@ export default {
   <section
     class="form-user flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
   >
-    <h2 class="text-4xl mb-8">Editar curso</h2>
+    <h2 class="text-2xl md:text-3xl lg:text-4xl mb-8">Editar curso</h2>
     <form action="#" @submit.prevent="editService">
       <div class="my-3">
         <PrimaryLabel for="title">Título</PrimaryLabel>

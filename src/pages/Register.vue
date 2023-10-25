@@ -28,12 +28,13 @@ export default {
         if (registerState.email === this.user.email) {
           this.$router.push("/perfil");
         } else {
-          alert(registerState.message);
+          modalAlert(registerState.message, "warning");
         }
       } catch ({ message }) {
-        alert(message);
+        modalAlert(message, "error");
+      } finally {
+        this.loading = false;
       }
-      this.loading = false;
     },
   },
 };
@@ -43,7 +44,7 @@ export default {
   <section
     class="form-user flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
   >
-    <h2 class="text-4xl mb-8">Crear cuenta</h2>
+    <h2 class="text-2xl md:text-3xl lg:text-4xl mb-8">Crear cuenta</h2>
     <form action="#" @submit.prevent="register">
       <div class="my-3">
         <PrimaryLabel for="email">Correo electrónico</PrimaryLabel>

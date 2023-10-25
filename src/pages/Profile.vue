@@ -33,7 +33,7 @@ export default {
         (newMessages) => (this.messages = newMessages)
       );
     } catch (err) {
-      alert("Ha ocurrido un error");
+      this.$router.push("/");
     } finally {
       this.loading = false;
     }
@@ -47,15 +47,22 @@ export default {
 
 <template>
   <section class="profile">
-    <h1>Perfil de {{ user.email }}</h1>
-    <p>Este perfil tiene un rol de {{ user.role }}</p>
-    <template v-if="messages.length">
-      <h2>Chats</h2>
-      <router-link to="/chat">Ver chat</router-link>
-    </template>
-    <template v-else>
-      <p>No tienes chats, <router-link to="/chat">contactar al administrador</router-link></p>
-    </template>
+    <div class="content">
+      <img src="images/user.jpg" alt="Usuario" />
+      <div class="info">
+        <h1 class="text-1xl md:text-2xl">Perfil de <b>{{ user.email }}</b></h1>
+        <p>Este perfil puede ser visto por usuarios registrados</p>
+      </div>
+      <div class="chat-content">
+        <template v-if="messages.length">
+          <h2 class="text-1xl md:text-2xl">Chats</h2>
+          <router-link to="/chat">Continuar la conversación con el administrador</router-link>
+        </template>
+        <template v-else>
+          <p>No tienes chats abiertos, podes <router-link to="/chat">contactar al administrador</router-link></p>
+        </template>
+      </div>
+    </div>
   </section>
 </template>
 

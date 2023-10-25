@@ -30,10 +30,7 @@ export default {
   },
   methods: {
     sendMessage() {
-      if(!this.newMessage){
-        alert("Tiene que haber un mensaje");
-        return;
-      }
+      if(!this.newMessage) return;
       sendPrivateMessage({
         senderId: this.authUser.id,
         receiverId: 'RzfSLE6IlIRpb8kuDETD34I0rE82',
@@ -71,7 +68,7 @@ export default {
         (newMessages) => (this.messages = newMessages)
       );
     } catch (err) {
-      alert("Ha ocurrido un error");
+      this.$router.push("/perfil");
     } finally {
       this.loading = false;
       this.messagesLoading = false;
@@ -86,7 +83,7 @@ export default {
 
 <template>
   <section>
-    <h1 class="text-3xl md:text-4xl lg:text-5xl mb-8">Chat con Administrador </h1>   
+    <h1 class="text-3xl md:text-4xl lg:text-5xl mb-8">Chat con Administrador</h1>   
 
     <h2 class="sr-only">Mensajes</h2>
     <div

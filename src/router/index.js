@@ -8,7 +8,7 @@ const routes = [
     component: () => import('../pages/Home.vue')
   },
   {
-    path: '/servicios',
+    path: '/cursos',
     component: () => import('../pages/Services.vue')
   },
   {
@@ -40,19 +40,23 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/admin/servicios',
+    path: '/admin/cursos',
     component: () => import('../admin/Services.vue'),
     meta: { requiresAuth: true }
   },
   {
-    path: '/admin/servicios/crear',
+    path: '/admin/cursos/crear',
     component: () => import('../admin/CreateService.vue'),
     meta: { requiresAuth: true }
   },
   {
-    path: '/admin/servicios/:id/editar',
+    path: '/admin/cursos/:id/editar',
     component: () => import('../admin/EditService.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/:catchAll(.*)',
+    redirect: "/"
   }
 ];
 

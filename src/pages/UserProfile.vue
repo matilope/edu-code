@@ -20,7 +20,9 @@ export default {
     this.loading = true;
     try {
       this.user = await getUserById(this.$route.params.id);
-    } catch (err) {}
+    } catch (err) {
+      this.$router.push("/");
+    }
     this.loading = false;
   },
 };

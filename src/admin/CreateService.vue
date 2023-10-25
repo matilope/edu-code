@@ -4,6 +4,7 @@ import PrimaryInput from "../components/PrimaryInput.vue";
 import PrimaryLabel from "../components/PrimaryLabel.vue";
 import PrimaryTextarea from "../components/PrimaryTextarea.vue";
 import { saveService } from "../services/services.js";
+import { modalAlert } from "../helpers/modal.js";
 
 export default {
   name: "CreateService",
@@ -33,10 +34,12 @@ export default {
         const newService = await saveService(this.service);
         if (newService?.id) {
           this.loading = false;
-          this.$router.push("/servicios");
+          this.$router.push("/admin/cursos");
         }
-      } catch ({ message }) {
-        alert(message);
+      } catch (err) {
+        modalAlert("Ha ocurrido un error", "error");
+      } finally {
+        this.loading = false;
       }
     },
   },
@@ -47,7 +50,7 @@ export default {
   <section
     class="form-user flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
   >
-    <h2 class="text-4xl mb-8">Publicar curso</h2>
+    <h2 class="text-2xl md:text-3xl lg:text-4xl mb-8">Publicar curso</h2>
     <form action="#" @submit.prevent="createService">
       <div class="my-3">
         <PrimaryLabel for="title">Título</PrimaryLabel>

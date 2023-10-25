@@ -15,7 +15,6 @@ export async function editService(id, data) {
     await updateDoc(doc(db, `services/${id}`), data);
     return true;
   } catch (err) {
-    console.log(err)
     return false;
   }
 }
@@ -23,8 +22,7 @@ export async function editService(id, data) {
 export async function deleteService(id) {
   const refService = doc(db, 'services', id);
   try {
-    const deleted = await deleteDoc(refService);
-    console.log("Deleted: ", deleted);
+    await deleteDoc(refService);
     return true;
   } catch (err) {
     return false;
@@ -45,7 +43,9 @@ export async function getServiceById(id) {
       price: docSnapshot.data().price,
       created_at: docSnapshot.data().created_at?.toDate(),
     }
-  } catch (err) { }
+  } catch (err) {
+    return false;
+  }
 }
 
 export function subscribeToService(callback) {
