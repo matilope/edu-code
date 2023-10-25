@@ -30,35 +30,9 @@ img {
 }
 
 /* Home */
-.presentation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4rem;
-}
-
-.presentation div {
-  width: 50%;
-}
 
 .presentation img {
   border-radius: .375rem;
-}
-
-.details {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-@media (max-width:1023px) {
-  .presentation div {
-    width: 100%;
-  }
-
-  .presentation img {
-    display: none;
-  }
 }
 
 @media (max-width:767px) {

@@ -29,12 +29,13 @@ export default {
 </script>
 
 <template>
+  <span v-if="user.id">Rol: {{ user.role }}</span>
   <nav class="container mx-auto relative py-4 flex justify-between items-center bg-white">
     <div class="w-full px-4">
       <div class="relative flex h-16 items-center justify-between">
         <div class="absolute inset-y-0 left-0 flex items-center lg:hidden">
 
-          <button type="button" @click="toggle" class="custom-menu relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-green-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+          <button type="button" @click="toggle" class="custom-menu relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-green-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
             <span class="absolute -inset-0.5"></span>
             <span class="sr-only">Abrir menu principal</span>
 
@@ -45,7 +46,7 @@ export default {
             <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
+          </button> 
         </div>
         <div class="flex flex-1 items-center justify-center lg:justify-start">
           <div class="flex flex-shrink-0 items-center">
@@ -55,10 +56,10 @@ export default {
           </div>
           <div class="hidden lg:ml-6 lg:block">
             <ul class="flex space-x-4 items-center">
-              <li><router-link to="/" class="hover:bg-green-700 text-md text-black rounded-md px-3 py-2 font-medium">Inicio</router-link></li>
-              <li><router-link to="/cursos" class="hover:bg-green-700 text-md text-black rounded-md px-3 py-2 font-medium">Cursos</router-link></li>
+              <li><router-link to="/" class="hover:bg-green-300 text-md text-black rounded-md px-3 py-2 font-medium">Inicio</router-link></li>
+              <li><router-link to="/cursos" class="hover:bg-green-300 text-md text-black rounded-md px-3 py-2 font-medium">Cursos</router-link></li>
               <template v-if="user.id">
-                <li><router-link to="/perfil" class="hover:bg-green-700 text-md text-black rounded-md px-3 py-2 font-medium">Perfil</router-link></li>
+                <li><router-link to="/perfil" class="hover:bg-green-300 text-md text-black rounded-md px-3 py-2 font-medium">Perfil</router-link></li>
                 <template v-if="user.role == 'usuario'">
                   <li>
                     <router-link
@@ -123,10 +124,10 @@ export default {
   
     <div class="hidden" id="mobile-menu" ref="mobileMenu">
       <div class="space-y-1 px-2 pb-3 pt-2">
-        <router-link to="/" class="hover:bg-green-700 text-black block rounded-md px-3 py-2 text-base font-medium">Inicio</router-link>
-        <router-link to="/cursos" class="hover:bg-green-700 text-md text-black rounded-md px-3 py-2 font-medium">Cursos</router-link>
+        <router-link to="/" class="hover:bg-green-300 text-black block rounded-md px-3 py-2 text-base font-medium">Inicio</router-link>
+        <router-link to="/cursos" class="hover:bg-green-300 text-md text-black rounded-md px-3 py-2 font-medium">Cursos</router-link>
         <template v-if="user.id">
-          <router-link to="/perfil" class="hover:bg-green-700 text-md text-black rounded-md px-3 py-2 font-medium">Perfil</router-link>
+          <router-link to="/perfil" class="hover:bg-green-300 text-md text-black rounded-md px-3 py-2 font-medium">Perfil</router-link>
           <template v-if="user.role == 'usuario'">
               <router-link
                 class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-50 hover:text-green-600 rounded"
