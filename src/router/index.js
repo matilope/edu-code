@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 // createWebHistory necesitas un servidor, server side rendering (ssr)
-import { getUser } from '../services/auth.js';
+import { getUser, subscribeToAuth } from '../services/auth.js';
 
 const routes = [
   {
@@ -22,7 +22,7 @@ const routes = [
   {
     path: '/chat',
     component: () => import('../pages/Chat.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, role: 'user' }
   },
   {
     path: '/perfil',
@@ -32,27 +32,27 @@ const routes = [
   {
     path: '/usuario/:id',
     component: () => import('../pages/UserProfile.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, role: 'admin' }
   },
   {
     path: '/usuario/:id/chat',
     component: () => import('../admin/Chat.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, role: 'admin' }
   },
   {
     path: '/admin/cursos',
     component: () => import('../admin/Services.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, role: 'admin' }
   },
   {
     path: '/admin/cursos/crear',
     component: () => import('../admin/CreateService.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, role: 'admin'}
   },
   {
     path: '/admin/cursos/:id/editar',
     component: () => import('../admin/EditService.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, role: 'admin' }
   },
   {
     path: '/:catchAll(.*)',
@@ -65,16 +65,25 @@ const router = createRouter({
   history: createWebHashHistory()
 });
 
-router.beforeEach((to, from, next) => {
+let user = {
+  id: null,
+  name: null,
+  email: null,
+  role: null
+}
+
+subscribeToAuth(newUser => user = newUser);
+
+router.beforeEach((to, from) => {
   if (to.meta.requiresAuth) {
-    const user = getUser();
-    if (user.id !== null) {
-      next();
-    } else {
-      next('/iniciar-sesion')
+    if (user.id === null) {
+      return '/iniciar-sesion';
     }
-  } else {
-    next();
+    /*
+    if (to.path === "/chat" && user.role === "admin") {
+      return '/perfil';
+    }
+    */
   }
 });
 

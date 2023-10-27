@@ -16,7 +16,7 @@ export default {
       return {
         "h-4 w-4 text-gray-200 animate-spin dark:text-gray-600 fill-white":
           this.size == "sm",
-        "h-14 w-14 text-gray-200 animate-spin dark:text-gray-600 fill-green-600":
+        "h-14 w-14 text-gray-200 animate-spin dark:text-gray-600 fill-green-600 loader-md":
           this.size === "md",
       };
     },

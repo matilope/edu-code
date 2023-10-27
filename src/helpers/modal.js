@@ -38,6 +38,8 @@ export async function modalConfirmation(t, status, alert) {
     confirmation.classList.add("bg-red-600", "hover:bg-red-500");
     cancel.classList.add("bg-gray-500", "hover:bg-gray-400");
 
+    modal.setAttribute("role", "alert");
+    
     text.textContent = t;
     confirmation.textContent = "Confirmar";
     cancel.textContent = "Cancelar";
@@ -78,6 +80,8 @@ export function modalAlert(t, status) {
     modalBackground.classList.add("modal-background");
     modal.classList.add("modal");
     text.classList.add("my-4", "text-lg", "font-normal", "text-gray-700", "dark:text-gray-400");
+
+    modal.setAttribute("role", "alert");
 
     text.textContent = t;
 

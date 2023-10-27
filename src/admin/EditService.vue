@@ -34,10 +34,13 @@ export default {
         const newService = await editService(this.service.id, {...this.service});
         if (newService) {
           this.loading = false;
+          modalAlert("Se ha editado el curso correctamente", "success");
           this.$router.push("/admin/cursos");
+        } else {
+          modalAlert("Ha ocurrido un error al intentar editar el curso", "error");
         }
-      } catch (err) {
-        modalAlert("Ha ocurrido un error", "error");
+      } catch ({message}) {
+        modalAlert(message, "error");
       } finally {
         this.loading = false;
       }
@@ -47,8 +50,9 @@ export default {
     this.loading = true;
     try {
       this.service = await getServiceById(this.$route.params.id);
-    } catch (err) {
+    } catch ({message}) {
       this.$router.push("/admin/cursos");
+      modalAlert(message, "error");
     }
     finally {
       this.loading = false;

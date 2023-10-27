@@ -1,9 +1,10 @@
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase.js';
-import { createUser } from './user.js';
+import { createUser, getUserById } from './user.js';
 
 let user = {
   id: null,
+  name: null,
   email: null,
   role: null
 }
@@ -14,10 +15,10 @@ if (localStorage.getItem('user')) {
   user = JSON.parse(localStorage.getItem('user'));
 }
 
-export async function register({ email, password }) {
+export async function register({ name, email, password }) {
   try {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
-    createUser(user.uid, { email: user.email, role: 'usuario' });
+    createUser(user.uid, { name, email: user.email, role: 'user' });
     return { ...user }
   }
   catch ({ code, message }) {
@@ -46,12 +47,19 @@ export function logOut() {
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    getUser();
     setUser({
       id: user.uid,
       email: user.email,
-      role: user.role
     });
+    const userData = await getUserById(user.uid);
+    if (userData) {
+      setUser({
+        name: userData.name,
+        role: userData.role
+      });
+      user.name = userData.name;
+      user.role = userData.role;
+    }
     localStorage.setItem('user', JSON.stringify(user));
   } else {
     clearUser();
@@ -84,7 +92,7 @@ function setUser(newUser) {
 }
 
 function clearUser() {
-  setUser({ id: null, email: null, role: null });
+  setUser({ id: null, name: null, email: null, role: null });
 }
 
 export function getUser() {

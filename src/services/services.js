@@ -14,7 +14,7 @@ export async function editService(id, data) {
   try {
     await updateDoc(doc(db, `services/${id}`), data);
     return true;
-  } catch (err) {
+  } catch ({message}) {
     return false;
   }
 }
@@ -24,7 +24,7 @@ export async function deleteService(id) {
   try {
     await deleteDoc(refService);
     return true;
-  } catch (err) {
+  } catch ({message}) {
     return false;
   }
 }

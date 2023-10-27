@@ -34,10 +34,13 @@ export default {
         const newService = await saveService(this.service);
         if (newService?.id) {
           this.loading = false;
+          modalAlert("Se ha creado el curso correctamente", "success");
           this.$router.push("/admin/cursos");
+        } else {
+          modalAlert("Ha ocurrido un error al intentar crear el curso", "error");
         }
-      } catch (err) {
-        modalAlert("Ha ocurrido un error", "error");
+      } catch ({message}) {
+        modalAlert(message, "error");
       } finally {
         this.loading = false;
       }

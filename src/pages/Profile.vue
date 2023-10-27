@@ -1,21 +1,24 @@
 <script>
 import { subscribeToAuth } from "../services/auth.js";
-import { getUserById } from "../services/user.js";
-import { subscribeToPrivateChat } from "../services/chat.js";
+import { subscribeToUser } from "../services/user.js";
+import Loader from "../components/Loader.vue";
+import { modalAlert } from "../helpers/modal";
 
 export default {
   name: "Profile",
-  components: {},
+  components: { Loader },
   data() {
     return {
       loading: true,
       user: {
         id: null,
+        name: null,
         email: null,
+        role: null,
       },
       unsubscribeAuth: () => {},
-      unsubscribeChat: () => {},
-      messages: [],
+      unsubscribeUser: () => {},
+      users: [],
     };
   },
   methods: {},
@@ -25,22 +28,17 @@ export default {
       this.unsubscribeAuth = subscribeToAuth(
         (authUser) => (this.user = authUser)
       );
-      this.unsubscribeChat = await subscribeToPrivateChat(
-        {
-          senderId: this.user.id,
-          receiverId: "RzfSLE6IlIRpb8kuDETD34I0rE82",
-        },
-        (newMessages) => (this.messages = newMessages)
-      );
-    } catch (err) {
+      this.unsubscribeUser = subscribeToUser((users) => (this.users = users));
+    } catch ({ message }) {
       this.$router.push("/");
+      modalAlert(message, "error");
     } finally {
       this.loading = false;
     }
   },
   unmounted() {
     this.unsubscribeAuth();
-    this.unsubscribeChat();
+    this.unsubscribeUser();
   },
 };
 </script>
@@ -50,20 +48,36 @@ export default {
     <div class="content">
       <img src="images/user.jpg" alt="Usuario" />
       <div class="info">
-        <h1 class="text-1xl md:text-2xl">Perfil de <b>{{ user.email }}</b></h1>
-        <p>Este perfil puede ser visto por usuarios registrados</p>
+        <h1 class="text-1xl md:text-2xl">
+          Bienvenido a su perfil {{ user.name || "..." }}
+        </h1>
+        <p>
+          Su correo es <b>{{ user.email || "..." }}</b>
+        </p>
       </div>
       <div class="chat-content">
-        <template v-if="messages.length">
-          <h2 class="text-1xl md:text-2xl">Chats</h2>
-          <router-link to="/chat">Continuar la conversación con el administrador</router-link>
+        <template v-if="!loading">
+          <template v-if="user.role != 'admin'">
+            <h2 class="text-1xl md:text-2xl">Chats</h2>
+            <router-link to="/chat">Conversa con el administrador</router-link>
+          </template>
+          <template v-else>
+            <p class="mb-3">
+              Usted tiene chats abiertos con los siguientes usuarios:
+            </p>
+            <template v-for="userData in users">
+              <template v-if="userData.id !== user.id">
+                <router-link :to="`/usuario/${userData.id}/chat`" class="text-green-700"
+                  >Ir al chat de {{ userData.email }}</router-link
+                >
+              </template>
+            </template>
+          </template>
         </template>
         <template v-else>
-          <p>No tienes chats abiertos, podes <router-link to="/chat">contactar al administrador</router-link></p>
+          <Loader />
         </template>
       </div>
     </div>
   </section>
 </template>
-
-<style lang="scss" scoped></style>

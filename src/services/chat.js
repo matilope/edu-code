@@ -3,34 +3,6 @@ import { addDoc, collection, onSnapshot, serverTimestamp, query, orderBy, getDoc
 
 const privateChatRefCache = {};
 
-const refChat = collection(db, 'chats');
-/*
-export function sendMessage(data) {
-  // validar data!!!!!!!!!!!!!
-  return addDoc(refChat, {
-    ...data,
-    created_at: serverTimestamp()
-  });
-}
-
-export function subscribeChat(callback) {
-  return onSnapshot(query(refChat, orderBy('created_at', 'desc')), (snapshot) => {
-    const data = snapshot.docs.map(doc => {
-      return {
-        id: doc.id,
-        userId: doc.data().userId,
-        user: doc.data().user,
-        message: doc.data().message,
-        created_at: doc.data().created_at?.toDate()
-      }
-    });
-    callback(data);
-  });
-}
-*/
-
-/* Private chat */
-
 export async function sendPrivateMessage({ senderId, receiverId, message }) {
   const privateChat = await getPrivateChat({ senderId, receiverId });
   const messagesRef = collection(db, `chats/${privateChat.id}/messages`);
@@ -43,6 +15,7 @@ export async function sendPrivateMessage({ senderId, receiverId, message }) {
 }
 
 export async function subscribeToPrivateChat({ senderId, receiverId }, callback) {
+  //if (!senderId || !receiverId) return;
   const privateChat = await getPrivateChat({ senderId, receiverId });
   const messagesRef = collection(db, `chats/${privateChat.id}/messages`);
   const q = query(
@@ -63,8 +36,8 @@ export async function subscribeToPrivateChat({ senderId, receiverId }, callback)
 }
 
 export async function getPrivateChat({ senderId, receiverId }) {
-  /* const cachedRef = getCache({ senderId, receiverId });
-  if (cachedRef) return cachedRef; */
+  const cachedRef = getCache({ senderId, receiverId });
+  if (cachedRef) return cachedRef;
 
   const privateChatRef = collection(db, 'chats');
   const q = query(
@@ -91,20 +64,19 @@ export async function getPrivateChat({ senderId, receiverId }) {
   } else {
     privateChat = snapshot.docs[0];
   }
-  /* addCache({ senderId, receiverId }, privateChat); */
+  addCache({ senderId, receiverId }, privateChat);
   return privateChat;
 }
 
-/*
+
 function addCache({ senderId, receiverId }, value) {
-  privateChatRefCache[getKeyCache()] = value;
+  privateChatRefCache[getKeyCache({ senderId, receiverId })] = value;
 }
 
 function getCache({ senderId, receiverId }) {
-  return privateChatRefCache[getKeyCache()] || null;
+  return privateChatRefCache[getKeyCache({ senderId, receiverId })] || null;
 }
 
 function getKeyCache({ senderId, receiverId }) {
   return senderId + receiverId;
 }
-*/

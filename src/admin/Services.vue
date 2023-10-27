@@ -32,6 +32,8 @@ export default {
         } catch ({ message }) {
           modalAlert(message, "error");
         }
+      } else {
+        modalAlert("No se ha eliminado el curso", "success");
       }
     },
   },

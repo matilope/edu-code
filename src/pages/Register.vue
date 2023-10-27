@@ -14,6 +14,7 @@ export default {
   data() {
     return {
       user: {
+        name: "",
         email: "",
         password: "",
       },
@@ -46,6 +47,16 @@ export default {
   >
     <h2 class="text-2xl md:text-3xl lg:text-4xl mb-8">Crear cuenta</h2>
     <form action="#" @submit.prevent="register">
+      <div class="my-3">
+        <PrimaryLabel for="email">Nombre</PrimaryLabel>
+        <PrimaryInput
+          id="name"
+          type="text"
+          :disabled="loading"
+          v-model="user.name"
+          required
+        />
+      </div>
       <div class="my-3">
         <PrimaryLabel for="email">Correo electrónico</PrimaryLabel>
         <PrimaryInput

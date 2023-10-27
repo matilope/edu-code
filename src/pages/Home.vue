@@ -11,8 +11,10 @@ export default {
 
 <template>
   <div class="text-gray-800">
-    <div class="md:bg-[url('images/home.jpg')]  bg-cover md:h-[80vh] rounded container mx-auto p-8 flex justify-center md:justify-start items-center md:items-end space-x-10">
-      <div class="md:w-[60%] w-[100%] text-center md:text-start ">
+    <div
+      class="md:bg-[url('images/home.jpg')] bg-cover md:h-[50vh] rounded container mx-auto p-8 flex justify-center md:justify-start items-center md:items-end space-x-10"
+    >
+      <div class="md:w-[60%] w-[100%] text-center md:text-start banner">
         <h1 class="text-4xl font-semibold text-gray-800 md:text-white mb-4">
           Bienvenidos a EduCode
         </h1>
@@ -25,7 +27,9 @@ export default {
         </p>
       </div>
     </div>
-    <div class="details py-8 flex justify-center items-start md:space-x-10 space-y-10 md:space-y-0">
+    <div
+      class="details py-8 flex justify-center items-start md:space-x-10 space-y-10 md:space-y-0"
+    >
       <div class="w-[100%] rounded overflow-hidden shadow-lg">
         <img class="w-[100%]" src="images/home-courses.webp" alt="Cursos" />
         <div class="px-6 py-4">
@@ -52,7 +56,11 @@ export default {
         </div>
       </div>
       <div class="w-[100%] rounded overflow-hidden shadow-lg">
-        <img class="w-[100%] object-cover" src="images/customer-support.jpg" alt="Atención personalizada" />
+        <img
+          class="w-[100%] object-cover"
+          src="images/customer-support.jpg"
+          alt="Atención personalizada"
+        />
         <div class="px-6 py-4">
           <div class="font-bold text-xl mb-2">Atención personalizada</div>
           <p class="text-gray-700 text-base">
@@ -70,6 +78,30 @@ export default {
           <span
             class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
             >Atención al cliente</span
+          >
+        </div>
+      </div>
+      <div class="w-[100%] rounded overflow-hidden shadow-lg">
+        <img
+          class="w-[100%] object-cover"
+          src="images/certified.jpg"
+          alt="Certificado"
+        />
+        <div class="px-6 py-4">
+          <div class="font-bold text-xl mb-2">Ofrecemos certificados</div>
+          <p class="text-gray-700 text-base">
+            Descubre una experiencia de aprendizaje excepcional con una amplia
+            variedad de cursos temáticos de programación. Nuestros instructores expertos,
+            certificaciones de renombre y muchos mas recursos adicionales te brindarán las
+            herramientas que necesitas para alcanzar tus metas con facilidad y rapidez. Nos enorgullece
+            mantener nuestros cursos actualizados y flexibles para adaptarnos a
+            tu ritmo.
+          </p>
+        </div>
+        <div class="tags px-6 pt-4 pb-2">
+          <span
+            class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+            >Certificados</span
           >
         </div>
       </div>
