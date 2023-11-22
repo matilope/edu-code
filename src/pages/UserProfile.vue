@@ -1,33 +1,30 @@
-<script>
+<script setup>
 import { getUserById } from "../services/user";
-import Loader from "../components/Loader.vue";
 import { modalAlert } from "../helpers/modal";
+import Loader from "../components/Loader.vue";
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
-export default {
-  name: "UserProfile",
-  components: { Loader },
-  data() {
-    return {
-      loading: false,
-      user: {
-        id: null,
-        name: null
-      },
-    };
-  },
-  methods: {},
-  async mounted() {
-    this.loading = true;
-    try {
-      this.user = await getUserById(this.$route.params.id);
-    } catch ({message}) {
-      this.$router.push("/");
-      modalAlert(message, "error");
-    } finally {
-      this.loading = false;
-    }
-  },
-};
+const loading = ref(false);
+const user = ref({
+  id: null,
+  name: null,
+});
+
+const router = useRouter();
+const route = useRoute();
+
+onMounted(async () => {
+  loading.value = true;
+  try {
+    user.value = await getUserById(route.params.id);
+  } catch ({ message }) {
+    router.push("/");
+    modalAlert(message, "error");
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 
 <template>
@@ -40,7 +37,11 @@ export default {
             Perfil de {{ user.name || "..." }}
           </h1>
           <p>Este perfil puede ser visto por usuarios registrados</p>
-          <router-link :to="`/usuario/${user.id}/chat`" class="text-green-700 underline mt-3">Iniciar conversación con {{ user.email }}</router-link>
+          <router-link
+            :to="`/usuario/${user.id}/chat`"
+            class="text-green-700 underline mt-3"
+            >Iniciar conversación con {{ user.email }}</router-link
+          >
         </template>
         <template v-else>
           <Loader />

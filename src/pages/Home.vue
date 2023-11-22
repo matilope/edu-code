@@ -1,14 +1,3 @@
-<script>
-export default {
-  name: "Home",
-  components: {},
-  data() {
-    return {};
-  },
-  methods: {},
-};
-</script>
-
 <template>
   <div class="text-gray-800">
     <div

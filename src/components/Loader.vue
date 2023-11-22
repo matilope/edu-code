@@ -24,6 +24,34 @@ export default {
 };
 </script>
 
+<script setup>
+import { computed } from "vue";
+import {
+  LOADING_SIZES,
+  LOADING_SIZE_SMALL,
+  LOADING_SIZE_NORMAL,
+} from "../constants/constants";
+
+const props = defineProps({
+  size: {
+    type: String,
+    default: "md",
+    validator: (value) => {
+      return LOADING_SIZES.includes(value);
+    },
+  },
+});
+
+const loaderClass = computed(() => {
+  return {
+    "h-4 w-4 text-gray-200 animate-spin dark:text-gray-600 fill-white":
+      props.size == LOADING_SIZE_SMALL,
+    "h-14 w-14 text-gray-200 animate-spin dark:text-gray-600 fill-green-600 loader-md":
+      props.size === LOADING_SIZE_NORMAL,
+  };
+});
+</script>
+
 <template>
   <div role="status">
     <svg

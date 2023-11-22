@@ -1,64 +1,55 @@
-<script>
+<script setup>
 import PrimaryButton from "../components/PrimaryButton.vue";
 import PrimaryInput from "../components/PrimaryInput.vue";
 import PrimaryLabel from "../components/PrimaryLabel.vue";
 import PrimaryTextarea from "../components/PrimaryTextarea.vue";
-import { getServiceById, editService, } from "../services/services.js";
+import { getServiceById, editService } from "../services/services.js";
 import { modalAlert } from "../helpers/modal.js";
+import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted } from "vue";
 
-export default {
-  name: "EditeService",
-  components: {
-    PrimaryButton,
-    PrimaryInput,
-    PrimaryLabel,
-    PrimaryTextarea,
-  },
-  data() {
-    return {
-      loading: false,
-      service: {
-        title: null,
-        description: null,
-        duration: null,
-        level: null,
-        technologies: null,
-        price: null,
-      },
-    };
-  },
-  methods: {
-    async editService() {
-      this.loading = true;
-      try {
-        const newService = await editService(this.service.id, {...this.service});
-        if (newService) {
-          this.loading = false;
-          modalAlert("Se ha editado el curso correctamente", "success");
-          this.$router.push("/admin/cursos");
-        } else {
-          modalAlert("Ha ocurrido un error al intentar editar el curso", "error");
-        }
-      } catch ({message}) {
-        modalAlert(message, "error");
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
-  async mounted(){
-    this.loading = true;
-    try {
-      this.service = await getServiceById(this.$route.params.id);
-    } catch ({message}) {
-      this.$router.push("/admin/cursos");
-      modalAlert(message, "error");
+const router = useRouter();
+const route = useRoute();
+const loading = ref(false);
+const service = ref({
+  title: null,
+  description: null,
+  duration: null,
+  level: null,
+  technologies: null,
+  price: null,
+});
+
+const handleEditService = async () => {
+  loading.value = true;
+  try {
+    const newService = await editService(service.value.id, {
+      ...service.value,
+    });
+    if (newService) {
+      loading.value = false;
+      modalAlert("Se ha editado el curso correctamente", "success");
+      router.push("/admin/cursos");
+    } else {
+      modalAlert("Ha ocurrido un error al intentar editar el curso", "error");
     }
-    finally {
-      this.loading = false;
-    }
+  } catch ({ message }) {
+    modalAlert(message, "error");
+  } finally {
+    loading.value = false;
   }
 };
+onMounted(async () => {
+  loading.value = true;
+  try {
+    service.value = await getServiceById(route.params.id);
+  } catch ({ message }) {
+    this.$router.push("/admin/cursos");
+    modalAlert(message, "error");
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 
 <template>
@@ -66,7 +57,7 @@ export default {
     class="form-user flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
   >
     <h2 class="text-2xl md:text-3xl lg:text-4xl mb-8">Editar curso</h2>
-    <form action="#" @submit.prevent="editService">
+    <form action="#" @submit.prevent="handleEditService">
       <div class="my-3">
         <PrimaryLabel for="title">Título</PrimaryLabel>
         <PrimaryInput
@@ -132,7 +123,9 @@ export default {
           required
         />
       </div>
-      <PrimaryButton type="submit" :disabled="loading" :loading="loading"> Editar </PrimaryButton>
+      <PrimaryButton type="submit" :disabled="loading" :loading="loading">
+        Editar
+      </PrimaryButton>
     </form>
   </section>
 </template>

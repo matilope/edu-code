@@ -1,9 +1,3 @@
-<script>
-export default {
-  name: "ChatLoader",
-};
-</script>
-
 <template>
   <div role="status">
     <div class="animate-pulse">

@@ -16,8 +16,8 @@ export default {
         email: null,
         role: null,
       },
-      unsubscribeAuth: () => {},
-      unsubscribeUser: () => {},
+      unSubscribeAuth: () => {},
+      unSubscribeUser: () => {},
       users: [],
     };
   },
@@ -25,10 +25,10 @@ export default {
   async mounted() {
     this.loading = true;
     try {
-      this.unsubscribeAuth = subscribeToAuth(
+      this.unSubscribeAuth = subscribeToAuth(
         (authUser) => (this.user = authUser)
       );
-      this.unsubscribeUser = subscribeToUser((users) => (this.users = users));
+      this.unSubscribeUser = subscribeToUser((users) => (this.users = users));
     } catch ({ message }) {
       this.$router.push("/");
       modalAlert(message, "error");
@@ -37,10 +37,50 @@ export default {
     }
   },
   unmounted() {
-    this.unsubscribeAuth();
-    this.unsubscribeUser();
+    this.unSubscribeAuth();
+    this.unSubscribeUser();
   },
 };
+</script>
+
+<script setup>
+import { subscribeToAuth } from "../services/auth.js";
+import { subscribeToUser } from "../services/user.js";
+import Loader from "../components/Loader.vue";
+import { modalAlert } from "../helpers/modal";
+import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted } from "vue";
+
+const router = useRouter();
+const loading = ref(true);
+const user = ref({
+  id: null,
+  name: null,
+  email: null,
+  role: null,
+});
+const users = ref([]);
+
+let unSubscribeAuth;
+let unSubscribeUser;
+
+onMounted(async () => {
+  loading.value = true;
+  try {
+    unSubscribeAuth = subscribeToAuth((authUser) => (user.value = authUser));
+    unSubscribeUser = subscribeToUser((users) => (users.value = users));
+  } catch ({ message }) {
+    router.push("/");
+    modalAlert(message, "error");
+  } finally {
+    loading.value = false;
+  }
+});
+
+onUnmounted(() => {
+  unSubscribeAuth();
+  unSubscribeUser();
+});
 </script>
 
 <template>
@@ -67,7 +107,9 @@ export default {
             </p>
             <template v-for="userData in users">
               <template v-if="userData.id !== user.id">
-                <router-link :to="`/usuario/${userData.id}/chat`" class="text-green-700"
+                <router-link
+                  :to="`/usuario/${userData.id}/chat`"
+                  class="text-green-700"
                   >Ir al chat de {{ userData.email }}</router-link
                 >
               </template>

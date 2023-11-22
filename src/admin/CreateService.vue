@@ -1,51 +1,40 @@
-<script>
+<script setup>
 import PrimaryButton from "../components/PrimaryButton.vue";
 import PrimaryInput from "../components/PrimaryInput.vue";
 import PrimaryLabel from "../components/PrimaryLabel.vue";
 import PrimaryTextarea from "../components/PrimaryTextarea.vue";
 import { saveService } from "../services/services.js";
 import { modalAlert } from "../helpers/modal.js";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
 
-export default {
-  name: "CreateService",
-  components: {
-    PrimaryButton,
-    PrimaryInput,
-    PrimaryLabel,
-    PrimaryTextarea,
-  },
-  data() {
-    return {
-      loading: false,
-      service: {
-        title: null,
-        description: null,
-        duration: null,
-        level: null,
-        technologies: null,
-        price: null,
-      },
-    };
-  },
-  methods: {
-    async createService() {
-      this.loading = true;
-      try {
-        const newService = await saveService(this.service);
-        if (newService?.id) {
-          this.loading = false;
-          modalAlert("Se ha creado el curso correctamente", "success");
-          this.$router.push("/admin/cursos");
-        } else {
-          modalAlert("Ha ocurrido un error al intentar crear el curso", "error");
-        }
-      } catch ({message}) {
-        modalAlert(message, "error");
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
+const router = useRouter();
+const loading = ref(false);
+const service = ref({
+  title: null,
+  description: null,
+  duration: null,
+  level: null,
+  technologies: null,
+  price: null,
+});
+
+const createService = async () => {
+  loading.value = true;
+  try {
+    const newService = await saveService(service.value);
+    if (newService?.id) {
+      loading.value = false;
+      modalAlert("Se ha creado el curso correctamente", "success");
+      router.push("/admin/cursos");
+    } else {
+      modalAlert("Ha ocurrido un error al intentar crear el curso", "error");
+    }
+  } catch ({ message }) {
+    modalAlert(message, "error");
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 
@@ -114,7 +103,9 @@ export default {
           required
         />
       </div>
-      <PrimaryButton type="submit" :disabled="loading" :loading="loading"> Subir </PrimaryButton>
+      <PrimaryButton type="submit" :disabled="loading" :loading="loading">
+        Subir
+      </PrimaryButton>
     </form>
   </section>
 </template>

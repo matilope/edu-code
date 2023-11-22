@@ -1,4 +1,4 @@
-<script>
+<script setup>
 import ChatLoader from "../components/ChatLoader.vue";
 import PrimaryButton from "../components/PrimaryButton.vue";
 import PrimaryTextarea from "../components/PrimaryTextarea.vue";
@@ -10,82 +10,78 @@ import {
 } from "../services/chat.js";
 import { subscribeToAuth } from "../services/auth.js";
 import { modalAlert } from "../helpers/modal";
+import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted } from "vue";
 
-export default {
-  name: "Chat",
-  components: { PrimaryButton, PrimaryTextarea, PrimaryLabel, ChatLoader },
-  data() {
-    return {
-      loading: true,
-      authUser: {
-        id: null,
-        email: null,
-        role: null,
-      },
-      unsubscribeAuth: () => {},
-      newMessage: "",
-      messagesLoading: true,
-      messages: [],
-      unsubscribeMessages: () => {},
-    };
-  },
-  methods: {
-    sendMessage() {
-      if (!this.newMessage) return;
-      sendPrivateMessage({
+const router = useRouter();
+const loading = ref(true);
+const authUser = ref({
+  id: null,
+  email: null,
+  role: null,
+});
+const newMessage = ref("");
+const messagesLoading = ref(true);
+const messages = ref([]);
+let unSubscribeAuth;
+let unSubscribeMessage;
+
+const sendMessage = () => {
+  if (!newMessage.value) return;
+  sendPrivateMessage({
+    senderId: authUser.value.id,
+    receiverId: "RzfSLE6IlIRpb8kuDETD34I0rE82",
+    message: newMessage.value,
+  });
+  newMessage.value = "";
+};
+
+const formatTime = (date) => {
+  return timeToString(date);
+};
+
+const formatDate = (date) => {
+  return dateToString(date);
+};
+
+const showDate = (message, index) => {
+  if (index === 0) return true;
+  const currentMessageDate = formatDate(message?.created_at);
+  const previousMessageDate = formatDate(messages.value[index - 1]?.created_at);
+  return currentMessageDate !== previousMessageDate;
+};
+
+const sendMessageOnEnter = (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    sendMessage();
+  }
+};
+
+onMounted(async () => {
+  loading.value = true;
+  messagesLoading.value = true;
+  try {
+    unSubscribeAuth = subscribeToAuth((newUser) => (authUser.value = newUser));
+    unSubscribeMessage = await subscribeToPrivateChat(
+      {
         senderId: this.authUser.id,
         receiverId: "RzfSLE6IlIRpb8kuDETD34I0rE82",
-        message: this.newMessage,
-      });
-      this.newMessage = "";
-    },
-    formatTime(date) {
-      return timeToString(date);
-    },
-    formatDate(date) {
-      return dateToString(date);
-    },
-    showDate(message, index) {
-      if (index === 0) return true;
-      const currentMessageDate = this.formatDate(message?.created_at);
-      const previousMessageDate = this.formatDate(
-        this.messages[index - 1]?.created_at
-      );
-      return currentMessageDate !== previousMessageDate;
-    },
-    sendMessageOnEnter(e) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        this.sendMessage();
-      }
-    }
-  },
-  async mounted() {
-    this.loading = true;
-    this.messagesLoading = true;
-    try {
-      this.unsubscribeAuth = subscribeToAuth(
-        (newUser) => (this.authUser = newUser)
-      );
-      this.unsubscribeMessages = await subscribeToPrivateChat(
-        {
-          senderId: this.authUser.id,
-          receiverId: "RzfSLE6IlIRpb8kuDETD34I0rE82",
-        },
-        (newMessages) => (this.messages = newMessages)
-      );
-    } catch ({message}) {
-      this.$router.push("/perfil");
-      modalAlert(message, "error");
-    } finally {
-      this.loading = false;
-      this.messagesLoading = false;
-    }
-  },
-  unmounted() {
-    this.unsubscribeAuth();
-    this.unsubscribeMessages();
-  },
-};
+      },
+      (newMessages) => (messages.value = newMessages)
+    );
+  } catch ({ message }) {
+    router.push("/perfil");
+    modalAlert(message, "error");
+  } finally {
+    loading.value = false;
+    messagesLoading.value = false;
+  }
+});
+
+onUnmounted(() => {
+  unSubscribeAuth();
+  unSubscribeMessage();
+});
 </script>
 
 <template>

@@ -1,43 +1,34 @@
-<script>
+<script setup>
 import PrimaryButton from "../components/PrimaryButton.vue";
 import PrimaryInput from "../components/PrimaryInput.vue";
 import PrimaryLabel from "../components/PrimaryLabel.vue";
 import { register } from "../services/auth.js";
+import { modalAlert } from "../helpers/modal.js";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-export default {
-  name: "Register",
-  components: {
-    PrimaryButton,
-    PrimaryInput,
-    PrimaryLabel,
-  },
-  data() {
-    return {
-      user: {
-        name: "",
-        email: "",
-        password: "",
-      },
-      loading: false,
-    };
-  },
-  methods: {
-    async register() {
-      this.loading = true;
-      try {
-        const registerState = await register({ ...this.user });
-        if (registerState.email === this.user.email) {
-          this.$router.push("/perfil");
-        } else {
-          modalAlert(registerState.message, "warning");
-        }
-      } catch ({ message }) {
-        modalAlert(message, "error");
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
+const router = useRouter();
+const loading = ref(false);
+const user = ref({
+  name: "",
+  email: "",
+  password: "",
+});
+
+const register = async () => {
+  loading.value = true;
+  try {
+    const registerState = await logIn({ ...user.value });
+    if (registerState.email === user.value.email) {
+      router.push("/perfil");
+    } else {
+      modalAlert(registerState.message, "warning");
+    }
+  } catch ({ message }) {
+    modalAlert(message, "error");
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 

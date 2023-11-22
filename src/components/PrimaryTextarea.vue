@@ -1,9 +1,12 @@
-<script>
-export default {
-  name: "PrimaryInput",
-  props: ["modelValue"],
-  emits: ["update:modelValue"],
-};
+<script setup>
+const props = defineProps({
+  modelValue: {
+    type: String,
+    required: true
+  },
+});
+
+defineEmits(["update:modelValue"]);
 </script>
 
 <template>

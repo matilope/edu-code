@@ -1,45 +1,55 @@
-<script>
+<script setup>
 import { subscribeToAuth, logOut } from "./services/auth.js";
-import { getUserById } from "./services/user.js";
+import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted } from "vue";
 
-export default {
-  name: "App",
-  components: {},
-  data() {
-    return {
-      user: {
-        id: null,
-        name: null,
-        email: null,
-        role: null,
-      },
-    };
-  },
-  methods: {
-    logOut() {
-      logOut();
-      this.$router.push("/iniciar-sesion");
-    },
-    toggle() {
-      this.$refs.mobileMenu?.classList.toggle("hidden");
-      if (this.$refs.menuButton?.getAttribute("aria-expanded") == "false") {
-        this.$refs.menuButton?.setAttribute("aria-expanded", "true");
-      } else {
-        this.$refs.menuButton?.setAttribute("aria-expanded", "false");
-      }
-    },
-  },
-  mounted() {
-    subscribeToAuth(async (user) => {
-      this.user = { ...user };
-      try {
-        const { role, name } = await getUserById(this.user.id);
-        this.user.role = role;
-        this.user.name = name;
-      } catch (err) {}
-    });
-  },
+const { handleLogOut } = useLogOut();
+const { user } = useAuth();
+
+const toggle = () => {
+  /* chequear
+  this.$refs.mobileMenu?.classList.toggle("hidden");
+  if (this.$refs.menuButton?.getAttribute("aria-expanded") == "false") {
+    this.$refs.menuButton?.setAttribute("aria-expanded", "true");
+  } else {
+    this.$refs.menuButton?.setAttribute("aria-expanded", "false");
+  } */
 };
+
+function useLogOut() {
+  const router = useRouter();
+  const handleLogOut = () => {
+    logOut();
+    router.push("/iniciar-sesion");
+  };
+  return {
+    handleLogOut
+  }
+}
+
+function useAuth() {
+  const user = ref({
+    id: null,
+    name: null,
+    email: null,
+    role: null,
+  });
+
+  let unSubscribeAuth;
+
+  onMounted(
+    () =>
+      (unSubscribeAuth = subscribeToAuth(
+        (user) => (user.value = { ...user })
+      ))
+  );
+
+  onUnmounted(() => unSubscribeAuth());
+
+  return {
+    user
+  }
+}
 </script>
 
 <template>
@@ -170,7 +180,11 @@ export default {
               </router-link>
             </template>
             <template v-else>
-              <form class="hidden lg:block" action="#" @submit.prevent="logOut">
+              <form
+                class="hidden lg:block"
+                action="#"
+                @submit.prevent="handleLogOut"
+              >
                 <button
                   class="px-6 py-2.5 bg-yellow-600 hover:bg-yellow-500 text-sm text-white font-bold rounded-md transition duration-200"
                   type="submit"
@@ -235,7 +249,7 @@ export default {
               >Crear curso</router-link
             >
           </template>
-          <form class="block" action="#" @submit.prevent="logOut">
+          <form class="block" action="#" @submit.prevent="handleLogOut">
             <button
               class="px-6 py-2.5 bg-yellow-600 hover:bg-yellow-500 text-sm text-white font-bold rounded-md transition duration-200"
               type="submit"

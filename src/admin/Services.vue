@@ -11,7 +11,7 @@ export default {
     return {
       loading: true,
       services: [],
-      unsubscribeServices: () => {},
+      unSubscribeServices: () => {},
     };
   },
   methods: {
@@ -40,7 +40,7 @@ export default {
   async mounted() {
     this.loading = true;
     try {
-      this.unsubscribeServices = subscribeToService(
+      this.unSubscribeServices = subscribeToService(
         (newServices) => (this.services = newServices)
       );
     } catch (err) {
@@ -50,7 +50,7 @@ export default {
     }
   },
   unmounted() {
-    this.unsubscribeServices();
+    this.unSubscribeServices();
   },
 };
 </script>

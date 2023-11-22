@@ -1,4 +1,4 @@
-<script>
+<script setup>
 import ChatLoader from "../components/ChatLoader.vue";
 import PrimaryButton from "../components/PrimaryButton.vue";
 import PrimaryTextarea from "../components/PrimaryTextarea.vue";
@@ -10,90 +10,88 @@ import {
 } from "../services/chat.js";
 import { getUserById } from "../services/user";
 import { subscribeToAuth } from "../services/auth.js";
+import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted, onUnmounted } from "vue";
 
-export default {
-  name: "Chat",
-  components: { PrimaryButton, PrimaryTextarea, PrimaryLabel, ChatLoader },
-  data() {
-    return {
-      loading: true,
-      user: {
-        id: null,
-        name: null,
-        email: null,
-        role: null,
-      },
-      authUser: {
-        id: null,
-        name: null,
-        email: null,
-        role: null,
-      },
-      unsubscribeAuth: () => {},
-      newMessage: "",
-      messagesLoading: true,
-      messages: [],
-      unsubscribeMessages: () => {},
-    };
-  },
-  methods: {
-    sendMessage() {
-      if (!this.newMessage) return;
-      sendPrivateMessage({
-        senderId: this.authUser.id,
-        receiverId: this.user.id,
-        message: this.newMessage,
-      });
-      this.newMessage = "";
-    },
-    formatTime(date) {
-      return timeToString(date);
-    },
-    formatDate(date) {
-      return dateToString(date);
-    },
-    showDate(message, index) {
-      if (index === 0) return true;
-      const currentMessageDate = this.formatDate(message?.created_at);
-      const previousMessageDate = this.formatDate(
-        this.messages[index - 1]?.created_at
-      );
-      return currentMessageDate !== previousMessageDate;
-    },
-    sendMessageOnEnter(e) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        this.sendMessage();
-      }
-    }
-  },
-  async mounted() {
-    this.loading = true;
-    this.messagesLoading = true;
-    try {
-      this.user = await getUserById(this.$route.params.id);
-      this.unsubscribeAuth = subscribeToAuth(
-        (newUser) => (this.authUser = newUser)
-      );
-      this.unsubscribeMessages = await subscribeToPrivateChat(
-        {
-          senderId: this.authUser.id,
-          receiverId: this.user.id,
-        },
-        (newMessages) => (this.messages = newMessages)
-      );
-    } catch ({ message }) {
-      this.$router.push("/perfil");
-      modalAlert(message, "error");
-    } finally {
-      this.loading = false;
-      this.messagesLoading = false;
-    }
-  },
-  unmounted() {
-    this.unsubscribeAuth();
-    this.unsubscribeMessages();
-  },
+const router = useRouter();
+const route = useRoute();
+const loading = ref(true);
+const user = ref({
+  id: null,
+  name: null,
+  email: null,
+  role: null,
+});
+const authUser = ref({
+  id: null,
+  name: null,
+  email: null,
+  role: null,
+});
+
+const newMessage = ref("");
+const messagesLoading = ref(true);
+const messages = ref([]);
+let unSubscribeAuth;
+let unSubscribeMessages;
+
+const sendMessage = () => {
+  if (!newMessage.value) return;
+  sendPrivateMessage({
+    senderId: authUser.value.id,
+    receiverId: user.value.id,
+    message: newMessage.value,
+  });
+  newMessage.value = "";
 };
+
+const formatTime = (date) => {
+  return timeToString(date);
+};
+
+const formatDate = (date) => {
+  return dateToString(date);
+};
+
+const showDate = (message, index) => {
+  if (index === 0) return true;
+  const currentMessageDate = formatDate(message?.created_at);
+  const previousMessageDate = formatDate(messages.value[index - 1]?.created_at);
+  return currentMessageDate !== previousMessageDate;
+};
+
+const sendMessageOnEnter = (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    sendMessage();
+  }
+};
+
+onMounted(async () => {
+  loading.value = true;
+  messagesLoading.value = true;
+  try {
+    user.vaalue = await getUserById(route.params.id);
+    unSubscribeAuth = subscribeToAuth((newUser) => (authUser.value = newUser));
+    unSubscribeMessages = await subscribeToPrivateChat(
+      {
+        senderId: authUser.value.id,
+        receiverId: user.value.id,
+      },
+      (newMessages) => (messages.value = newMessages)
+    );
+  } catch ({ message }) {
+    router.push("/perfil");
+    modalAlert(message, "error");
+  } finally {
+    loading.value = false;
+    messagesLoading.value = false;
+  }
+});
+
+onUnmounted(() => {
+  unSubscribeAuth();
+  unSubscribeMessages();
+});
 </script>
 
 <template>

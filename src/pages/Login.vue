@@ -1,43 +1,35 @@
-<script>
+<script setup>
 import PrimaryButton from "../components/PrimaryButton.vue";
 import PrimaryInput from "../components/PrimaryInput.vue";
 import PrimaryLabel from "../components/PrimaryLabel.vue";
 import { logIn } from "../services/auth.js";
 import { modalAlert } from "../helpers/modal.js";
+import { ref } from "vue";
+import { useRouter } from 'vue-router';
 
-export default {
-  name: "Login",
-  components: {
-    PrimaryButton,
-    PrimaryInput,
-    PrimaryLabel,
-  },
-  data() {
-    return {
-      user: {
-        email: "",
-        password: ""
-      },
-      loading: false,
-    };
-  },
-  methods: {
-    async logIn() {
-      this.loading = true;
-      try {
-        const loginState = await logIn({ ...this.user });
-        if (loginState.email === this.user.email) {
-          this.$router.push("/perfil");
-        } else {
-          modalAlert(loginState.message, "warning");
-        }
-      } catch ({ message }) {
-        modalAlert(message, "error");
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
+const loading = ref(false);
+
+const user = ref({
+  email: "",
+  password: "",
+});
+
+const router = useRouter();
+
+const login = async () => {
+  loading.value = true;
+  try {
+    const loginState = await logIn({ ...user.value });
+    if (loginState.email === user.value.email) {
+      router.push("/perfil");
+    } else {
+      modalAlert(loginState.message, "warning");
+    }
+  } catch ({ message }) {
+    modalAlert(message, "error");
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 
@@ -68,9 +60,9 @@ export default {
           required
         />
       </div>
-      <PrimaryButton type="submit" :disabled="loading" :loading="loading"> Ingresar </PrimaryButton>
+      <PrimaryButton type="submit" :disabled="loading" :loading="loading">
+        Ingresar
+      </PrimaryButton>
     </form>
   </section>
 </template>
-
-<style lang="scss" scoped></style>
