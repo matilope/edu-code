@@ -1,58 +1,51 @@
-<script>
+<script setup>
 import { subscribeToService, deleteService } from "../services/services.js";
 import { dateToString } from "../helpers/date.js";
 import { numberToCurrency } from "../helpers/price.js";
 import { modalConfirmation, modalAlert } from "../helpers/modal.js";
+import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted } from "vue";
 
-export default {
-  name: "AdminServices",
-  components: {},
-  data() {
-    return {
-      loading: true,
-      services: [],
-      unSubscribeServices: () => {},
-    };
-  },
-  methods: {
-    formatDate(date) {
-      return dateToString(date);
-    },
-    formatPrice(price) {
-      return numberToCurrency(price);
-    },
-    async deleteService(id) {
-      const result = await modalConfirmation("¿Estas seguro de eliminar el curso?", "error");
-      if(result) {
-        try {
-          const deletedService = await deleteService(id);
-          if (deletedService) {
-            modalAlert("Se ha eliminado correctamente", "success");
-          }
-        } catch ({ message }) {
-          modalAlert(message, "error");
-        }
-      } else {
-        modalAlert("No se ha eliminado el curso", "success");
-      }
-    },
-  },
-  async mounted() {
-    this.loading = true;
+const router = useRouter();
+const loading = ref(true);
+const services = ref([]);
+let unSubscribeServices = () => {};
+
+const handleDeleteService = async (id) => {
+  const result = await modalConfirmation(
+    "¿Estas seguro de eliminar el curso?",
+    "error"
+  );
+  if (result) {
     try {
-      this.unSubscribeServices = subscribeToService(
-        (newServices) => (this.services = newServices)
-      );
-    } catch (err) {
-      this.$router.push("/");
-    } finally {
-      this.loading = false;
+      const deletedService = await deleteService(id);
+      if (deletedService) {
+        modalAlert("Se ha eliminado correctamente", "success");
+      }
+    } catch ({ message }) {
+      modalAlert(message, "error");
     }
-  },
-  unmounted() {
-    this.unSubscribeServices();
-  },
+  } else {
+    modalAlert("No se ha eliminado el curso", "success");
+  }
 };
+
+onMounted(async () => {
+  loading.value = true;
+  try {
+    unSubscribeServices = subscribeToService(
+      (newServices) => (services.value = newServices)
+    );
+  } catch (err) {
+    router.push("/");
+  } finally {
+    loading.value = false;
+  }
+});
+
+onUnmounted(() => {
+  unSubscribeServices();
+});
 </script>
 
 <template>
@@ -70,40 +63,35 @@ export default {
       <table role="table" class="w-full min-w-[720px] overflow-x-scroll">
         <thead>
           <tr role="row">
-            <th
-              colspan="1"
-              role="columnheader"
-            >
+            <th colspan="1" role="columnheader">
               <div
                 class="flex items-center justify-between pb-2 pt-4 text-start uppercase tracking-wide text-gray-600 sm:text-xs lg:text-xs"
               >
                 Nombre del curso
               </div>
             </th>
-            <th
-              colspan="1"
-              role="columnheader"
-            >
+            <th colspan="1" role="columnheader">
               <div
                 class="flex items-center justify-between pb-2 pt-4 text-start uppercase tracking-wide text-gray-600 sm:text-xs lg:text-xs"
               >
                 Precio
               </div>
             </th>
-            <th
-              colspan="1"
-              role="columnheader"
-            >
+            <th colspan="1" role="columnheader">
+              <div
+                class="flex items-center justify-between pb-2 pt-4 text-start uppercase tracking-wide text-gray-600 sm:text-xs lg:text-xs"
+              >
+                Duración
+              </div>
+            </th>
+            <th colspan="1" role="columnheader">
               <div
                 class="flex items-center justify-between pb-2 pt-4 text-start uppercase tracking-wide text-gray-600 sm:text-xs lg:text-xs"
               >
                 Fecha de publicación
               </div>
             </th>
-            <th
-              colspan="1"
-              role="columnheader"
-            >
+            <th colspan="1" role="columnheader">
               <div
                 class="flex items-center justify-between pb-2 pt-4 text-start uppercase tracking-wide text-gray-600 sm:text-xs lg:text-xs"
               >
@@ -123,20 +111,31 @@ export default {
             </td>
             <td class="py-3 text-sm" role="cell">
               <p class="text-md font-medium text-gray-600 dark:text-white">
-                {{ formatPrice(service.price) }}
+                {{ numberToCurrency(service.price) }}
               </p>
             </td>
             <td class="py-3 text-sm" role="cell">
               <p class="text-md font-medium text-gray-600 dark:text-white">
-                {{ formatDate(service.created_at) }}
+                {{ service.duration }} horas
+              </p>
+            </td>
+            <td class="py-3 text-sm" role="cell">
+              <p class="text-md font-medium text-gray-600 dark:text-white">
+                {{ dateToString(service.created_at) }}
               </p>
             </td>
             <td>
               <div class="services-actions">
-                <router-link class="edit bg-yellow-600 hover:bg-yellow-500" :to="'/admin/cursos/' + service.id + '/editar'"
+                <router-link
+                  class="edit bg-yellow-600 hover:bg-yellow-500"
+                  :to="'/admin/cursos/' + service.id + '/editar'"
                   >Editar</router-link
                 >
-                <form class="delete bg-red-600 hover:bg-red-500" action="#" @submit.prevent="deleteService(service.id)">
+                <form
+                  class="delete bg-red-600 hover:bg-red-500"
+                  action="#"
+                  @submit.prevent="handleDeleteService(service.id)"
+                >
                   <button type="submit">Eliminar</button>
                 </form>
               </div>

@@ -3,6 +3,7 @@ import PrimaryButton from "../components/PrimaryButton.vue";
 import PrimaryInput from "../components/PrimaryInput.vue";
 import PrimaryLabel from "../components/PrimaryLabel.vue";
 import PrimaryTextarea from "../components/PrimaryTextarea.vue";
+import PrimarySelect from "../components/PrimarySelect.vue";
 import { saveService } from "../services/services.js";
 import { modalAlert } from "../helpers/modal.js";
 import { useRouter } from "vue-router";
@@ -75,28 +76,44 @@ const createService = async () => {
       </div>
       <div class="my-3">
         <PrimaryLabel for="level">Nivel</PrimaryLabel>
-        <PrimaryInput
+        <PrimarySelect
           id="level"
-          type="text"
           :disabled="loading"
           v-model="service.level"
           required
-        />
+        >
+          <option value="basico">Básico</option>
+          <option value="intermedio">Intermedio</option>
+          <option value="avanzado">Avanzado</option>
+        </PrimarySelect>
       </div>
       <div class="my-3">
         <PrimaryLabel for="technologies">Tecnologías</PrimaryLabel>
-        <PrimaryInput
-          id="level"
-          type="text"
+        <PrimarySelect
+          id="technologies"
           :disabled="loading"
           v-model="service.technologies"
           required
-        />
+        > 
+          <option value="angular">Angular</option>
+          <option value="vue">Vue</option>
+          <option value="react">React</option>
+          <option value="javascript">JavaScript</option>
+          <option value="typescript">TypeScript</option>
+          <option value="php">PHP</option>
+          <option value="laravel">Laravel</option>
+          <option value="nodejs">NodeJS</option>
+          <option value="mysql">MySQL</option>
+          <option value="mongodb">MongoDB</option>
+          <option value="html5">HTML5</option>
+          <option value="css">CSS</option>
+          <option value="sass">SASS</option>
+        </PrimarySelect>
       </div>
       <div class="my-3">
         <PrimaryLabel for="price">Precio</PrimaryLabel>
         <PrimaryInput
-          id="level"
+          id="price"
           type="number"
           :disabled="loading"
           v-model="service.price"

@@ -79,7 +79,7 @@ export function modalAlert(t, status) {
 
     modalBackground.classList.add("modal-background");
     modal.classList.add("modal");
-    text.classList.add("my-4", "text-lg", "font-normal", "text-gray-700", "dark:text-gray-400");
+    text.classList.add("mt-4", "text-lg", "font-normal", "text-gray-700", "dark:text-gray-400");
 
     modal.setAttribute("role", "alert");
 

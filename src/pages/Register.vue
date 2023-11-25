@@ -15,10 +15,10 @@ const user = ref({
   password: "",
 });
 
-const register = async () => {
+const handleRegister = async () => {
   loading.value = true;
   try {
-    const registerState = await logIn({ ...user.value });
+    const registerState = await register({ ...user.value });
     if (registerState.email === user.value.email) {
       router.push("/perfil");
     } else {
@@ -37,7 +37,7 @@ const register = async () => {
     class="form-user flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
   >
     <h2 class="text-2xl md:text-3xl lg:text-4xl mb-8">Crear cuenta</h2>
-    <form action="#" @submit.prevent="register">
+    <form action="#" @submit.prevent="handleRegister">
       <div class="my-3">
         <PrimaryLabel for="email">Nombre</PrimaryLabel>
         <PrimaryInput

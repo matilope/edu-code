@@ -16,7 +16,7 @@ const user = ref({
 
 const router = useRouter();
 
-const login = async () => {
+const handleLogIn = async () => {
   loading.value = true;
   try {
     const loginState = await logIn({ ...user.value });
@@ -38,7 +38,7 @@ const login = async () => {
     class="form-user flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
   >
     <h2 class="text-2xl md:text-3xl lg:text-4xl mb-8">Inicio de sesión</h2>
-    <form action="#" @submit.prevent="logIn">
+    <form action="#" @submit.prevent="handleLogIn">
       <div class="my-3">
         <PrimaryLabel for="email">Correo electrónico</PrimaryLabel>
         <PrimaryInput

@@ -8,46 +8,25 @@ import {
   sendPrivateMessage,
   subscribeToPrivateChat,
 } from "../services/chat.js";
-import { subscribeToAuth } from "../services/auth.js";
 import { modalAlert } from "../helpers/modal";
 import { useRouter } from "vue-router";
-import { ref, onMounted, onUnmounted } from "vue";
+import { onUnmounted, ref, watch, onMounted } from "vue";
+import { useAuth } from "../composition/useAuth";
 
 const router = useRouter();
-const loading = ref(true);
-const authUser = ref({
-  id: null,
-  email: null,
-  role: null,
-});
-const newMessage = ref("");
-const messagesLoading = ref(true);
-const messages = ref([]);
-let unSubscribeAuth;
-let unSubscribeMessage;
-
-const sendMessage = () => {
-  if (!newMessage.value) return;
-  sendPrivateMessage({
-    senderId: authUser.value.id,
-    receiverId: "RzfSLE6IlIRpb8kuDETD34I0rE82",
-    message: newMessage.value,
-  });
-  newMessage.value = "";
-};
-
-const formatTime = (date) => {
-  return timeToString(date);
-};
-
-const formatDate = (date) => {
-  return dateToString(date);
-};
+const { user: authUser } = useAuth();
+const adminId = ref({id: "RzfSLE6IlIRpb8kuDETD34I0rE82"});
+const { newMessage, messages, messagesLoading, sendMessage } = usePrivateChat(
+  authUser,
+  adminId
+);
 
 const showDate = (message, index) => {
   if (index === 0) return true;
-  const currentMessageDate = formatDate(message?.created_at);
-  const previousMessageDate = formatDate(messages.value[index - 1]?.created_at);
+  const currentMessageDate = dateToString(message?.created_at);
+  const previousMessageDate = dateToString(
+    messages.value[index - 1]?.created_at
+  );
   return currentMessageDate !== previousMessageDate;
 };
 
@@ -57,31 +36,69 @@ const sendMessageOnEnter = (e) => {
   }
 };
 
-onMounted(async () => {
-  loading.value = true;
-  messagesLoading.value = true;
-  try {
-    unSubscribeAuth = subscribeToAuth((newUser) => (authUser.value = newUser));
-    unSubscribeMessage = await subscribeToPrivateChat(
-      {
-        senderId: this.authUser.id,
-        receiverId: "RzfSLE6IlIRpb8kuDETD34I0rE82",
-      },
-      (newMessages) => (messages.value = newMessages)
-    );
-  } catch ({ message }) {
-    router.push("/perfil");
-    modalAlert(message, "error");
-  } finally {
-    loading.value = false;
-    messagesLoading.value = false;
-  }
-});
+function usePrivateChat(senderUser, receiverUser) {
+  const messagesLoading = ref(true);
+  const newMessage = ref("");
+  const messages = ref([]);
+  let unSubscribeMessage = () => {};
 
-onUnmounted(() => {
-  unSubscribeAuth();
-  unSubscribeMessage();
-});
+  async function sendMessage() {
+    await sendPrivateMessage({
+      senderId: senderUser.value.id,
+      receiverId: receiverUser.value.id,
+      message: newMessage.value,
+    });
+    newMessage.value = "";
+  }
+
+  /*
+ watch(receiverUser, async (newReceiverUser) => {
+  console.log(newReceiverUser);
+    if (newReceiverUser.id !== null) {
+      try {
+        unSubscribeMessage = await subscribeToPrivateChat(
+          {
+            senderId: senderUser.value.id,
+            receiverId: newReceiverUser.id,
+          },
+          (newMessages) => (messages.value = newMessages)
+        );
+      } catch ({ message }) {
+        router.push("/perfil");
+        modalAlert(message, "error");
+      } finally {
+        messagesLoading.value = false;
+      }
+    }
+  });*/
+
+ onMounted(async () => {
+    try {
+      unSubscribeMessage = await subscribeToPrivateChat(
+        {
+          senderId: senderUser.value.id,
+          receiverId: receiverUser.value.id,
+        },
+        (newMessages) => (messages.value = newMessages)
+      );
+      console.log(messages.value);
+    } catch ({ message }) {
+      router.push("/perfil");
+      modalAlert(message, "error");
+    } finally {
+      messagesLoading.value = false;
+    }
+  });
+
+  onUnmounted(() => unSubscribeMessage());
+
+  return {
+    messagesLoading,
+    newMessage,
+    messages,
+    sendMessage,
+  };
+}
 </script>
 
 <template>
@@ -94,29 +111,36 @@ onUnmounted(() => {
     <div class="chat-container">
       <ChatLoader v-if="messagesLoading" />
       <template v-else>
-        <div
-          v-for="(message, index) in messages"
-          :key="message.id"
-          class="message-container"
-        >
-          <div class="date" v-if="showDate(message, index)">
-            {{ formatDate(message.created_at) }}
+        <template v-if="messages.length == 0">
+          <div class="m-auto my-4 bg-gray-200 rounded-md py-2 px-3">
+            <p>No hay mensajes en el chat</p>
           </div>
+        </template>
+        <template v-else>
           <div
-            class="message"
-            :class="{
-              'bg-gray-100': message.senderId !== authUser.id,
-              'bg-green-200': message.senderId === authUser.id,
-              'self-end': message.senderId === authUser.id,
-              'self-start': message.senderId !== authUser.id,
-            }"
+            v-for="(message, index) in messages"
+            :key="message.id"
+            class="message-container"
           >
-            <div>{{ message.message }}</div>
-            <div class="text-right">
-              {{ formatTime(message.created_at) || "Enviando..." }}
+            <div class="date" v-if="showDate(message, index)">
+              {{ dateToString(message.created_at) }}
+            </div>
+            <div
+              class="message"
+              :class="{
+                'bg-gray-100': message.senderId !== authUser.id,
+                'bg-green-200': message.senderId === authUser.id,
+                'self-end': message.senderId === authUser.id,
+                'self-start': message.senderId !== authUser.id,
+              }"
+            >
+              <div>{{ message.message }}</div>
+              <div class="text-right">
+                {{ timeToString(message.created_at) || "Enviando..." }}
+              </div>
             </div>
           </div>
-        </div>
+        </template>
       </template>
     </div>
 

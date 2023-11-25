@@ -1,7 +1,7 @@
 <script setup>
-import { subscribeToAuth, logOut } from "./services/auth.js";
+import { logOut } from "./services/auth.js";
 import { useRouter } from "vue-router";
-import { ref, onMounted, onUnmounted } from "vue";
+import { useAuth } from "./composition/useAuth.js";
 
 const { handleLogOut } = useLogOut();
 const { user } = useAuth();
@@ -23,32 +23,8 @@ function useLogOut() {
     router.push("/iniciar-sesion");
   };
   return {
-    handleLogOut
-  }
-}
-
-function useAuth() {
-  const user = ref({
-    id: null,
-    name: null,
-    email: null,
-    role: null,
-  });
-
-  let unSubscribeAuth;
-
-  onMounted(
-    () =>
-      (unSubscribeAuth = subscribeToAuth(
-        (user) => (user.value = { ...user })
-      ))
-  );
-
-  onUnmounted(() => unSubscribeAuth());
-
-  return {
-    user
-  }
+    handleLogOut,
+  };
 }
 </script>
 

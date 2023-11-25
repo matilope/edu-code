@@ -15,7 +15,6 @@ export async function sendPrivateMessage({ senderId, receiverId, message }) {
 }
 
 export async function subscribeToPrivateChat({ senderId, receiverId }, callback) {
-  //if (!senderId || !receiverId) return;
   const privateChat = await getPrivateChat({ senderId, receiverId });
   const messagesRef = collection(db, `chats/${privateChat.id}/messages`);
   const q = query(

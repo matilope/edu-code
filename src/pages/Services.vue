@@ -9,14 +9,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 const router = useRouter();
 const loading = ref(true);
 const services = ref([]);
-let unSubscribeServices;
-
-const formatDate = (date) => {
-  return dateToString(date);
-};
-const formatPrice = (price) => {
-  return numberToCurrency(price);
-};
+let unSubscribeServices = () => {}; 
 
 onMounted(async () => {
   loading.value = true;
@@ -54,10 +47,10 @@ onUnmounted(() => {
             <p class="text-gray-700 text-base">
               {{ service.description }}
             </p>
-            <span class="price">{{ formatPrice(service.price) }}</span>
+            <span class="price">{{ numberToCurrency(service.price) }}</span>
             <span
               class="date inline-block bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800"
-              >{{ formatDate(service.created_at) }}</span
+              >{{ dateToString(service.created_at) }}</span
             >
           </div>
           <div class="px-6 pt-4 pb-2">

@@ -1,48 +1,3 @@
-<script>
-import { subscribeToAuth } from "../services/auth.js";
-import { subscribeToUser } from "../services/user.js";
-import Loader from "../components/Loader.vue";
-import { modalAlert } from "../helpers/modal";
-
-export default {
-  name: "Profile",
-  components: { Loader },
-  data() {
-    return {
-      loading: true,
-      user: {
-        id: null,
-        name: null,
-        email: null,
-        role: null,
-      },
-      unSubscribeAuth: () => {},
-      unSubscribeUser: () => {},
-      users: [],
-    };
-  },
-  methods: {},
-  async mounted() {
-    this.loading = true;
-    try {
-      this.unSubscribeAuth = subscribeToAuth(
-        (authUser) => (this.user = authUser)
-      );
-      this.unSubscribeUser = subscribeToUser((users) => (this.users = users));
-    } catch ({ message }) {
-      this.$router.push("/");
-      modalAlert(message, "error");
-    } finally {
-      this.loading = false;
-    }
-  },
-  unmounted() {
-    this.unSubscribeAuth();
-    this.unSubscribeUser();
-  },
-};
-</script>
-
 <script setup>
 import { subscribeToAuth } from "../services/auth.js";
 import { subscribeToUser } from "../services/user.js";
@@ -50,19 +5,15 @@ import Loader from "../components/Loader.vue";
 import { modalAlert } from "../helpers/modal";
 import { useRouter } from "vue-router";
 import { ref, onMounted, onUnmounted } from "vue";
+import { useAuth } from '../composition/useAuth.js';
 
 const router = useRouter();
 const loading = ref(true);
-const user = ref({
-  id: null,
-  name: null,
-  email: null,
-  role: null,
-});
+const { user } = useAuth();
 const users = ref([]);
 
-let unSubscribeAuth;
-let unSubscribeUser;
+let unSubscribeAuth = () => {};
+let unSubscribeUser = () => {};
 
 onMounted(async () => {
   loading.value = true;
@@ -89,7 +40,7 @@ onUnmounted(() => {
       <img src="images/user.jpg" alt="Usuario" />
       <div class="info">
         <h1 class="text-1xl md:text-2xl">
-          Bienvenido a su perfil {{ user.name || "..." }}
+          Bienvenido {{ user.name || "..." }}
         </h1>
         <p>
           Su correo es <b>{{ user.email || "..." }}</b>
@@ -103,7 +54,7 @@ onUnmounted(() => {
           </template>
           <template v-else>
             <p class="mb-3">
-              Usted tiene chats abiertos con los siguientes usuarios:
+              Usuarios con los que chatear
             </p>
             <template v-for="userData in users">
               <template v-if="userData.id !== user.id">

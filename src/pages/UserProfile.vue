@@ -1,30 +1,10 @@
 <script setup>
-import { getUserById } from "../services/user";
-import { modalAlert } from "../helpers/modal";
 import Loader from "../components/Loader.vue";
-import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
+import { useUser } from "../composition/useUser";
 
-const loading = ref(false);
-const user = ref({
-  id: null,
-  name: null,
-});
-
-const router = useRouter();
 const route = useRoute();
-
-onMounted(async () => {
-  loading.value = true;
-  try {
-    user.value = await getUserById(route.params.id);
-  } catch ({ message }) {
-    router.push("/");
-    modalAlert(message, "error");
-  } finally {
-    loading.value = false;
-  }
-});
+const { user, userLoading } = useUser(route.params.id);
 </script>
 
 <template>
@@ -32,7 +12,7 @@ onMounted(async () => {
     <div class="content">
       <img src="images/user.jpg" alt="Usuario" />
       <div class="info">
-        <template v-if="!loading">
+        <template v-if="!userLoading">
           <h1 class="text-1xl md:text-2xl">
             Perfil de {{ user.name || "..." }}
           </h1>

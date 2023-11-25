@@ -6,7 +6,8 @@ let user = {
   id: null,
   name: null,
   email: null,
-  role: null
+  role: null,
+  userLoaded: false
 }
 
 let observers = [];
@@ -15,10 +16,29 @@ if (localStorage.getItem('user')) {
   user = JSON.parse(localStorage.getItem('user'));
 }
 
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    setUser({
+      id: user.uid,
+      email: user.email,
+    });
+    const userData = await getUserById(user.uid);
+    if (userData) {
+      setUser({
+        name: userData.name,
+        role: userData.role,
+        userLoaded: true
+      });
+    }
+  } else {
+    clearUser();
+  }
+});
+
 export async function register({ name, email, password }) {
   try {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
-    createUser(user.uid, { name, email: user.email, role: 'user' });
+    await createUser(user.uid, { name, email: user.email, role: 'user' });
     return { ...user }
   }
   catch ({ code, message }) {
@@ -45,28 +65,6 @@ export function logOut() {
   return signOut(auth);
 }
 
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    setUser({
-      id: user.uid,
-      email: user.email,
-    });
-    const userData = await getUserById(user.uid);
-    if (userData) {
-      setUser({
-        name: userData.name,
-        role: userData.role
-      });
-      user.name = userData.name;
-      user.role = userData.role;
-    }
-    localStorage.setItem('user', JSON.stringify(user));
-  } else {
-    clearUser();
-    localStorage.removeItem('user');
-  }
-});
-
 export function subscribeToAuth(observer) {
   observers.push(observer);
   notify(observer);
@@ -75,12 +73,12 @@ export function subscribeToAuth(observer) {
   }
 }
 
-function notify(observer) {
-  observer(getUser());
-}
-
 function notifyAll() {
   observers.forEach(observer => notify(observer));
+}
+
+function notify(observer) {
+  observer(getUser());
 }
 
 function setUser(newUser) {
@@ -88,11 +86,13 @@ function setUser(newUser) {
     ...user,
     ...newUser
   }
+  localStorage.setItem('user', JSON.stringify(user));
   notifyAll();
 }
 
 function clearUser() {
   setUser({ id: null, name: null, email: null, role: null });
+  localStorage.removeItem('user');
 }
 
 export function getUser() {
