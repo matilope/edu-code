@@ -4,10 +4,11 @@ import PrimaryInput from "../components/PrimaryInput.vue";
 import PrimaryLabel from "../components/PrimaryLabel.vue";
 import PrimaryTextarea from "../components/PrimaryTextarea.vue";
 import { getServiceById, editService } from "../services/services.js";
-import { modalAlert } from "../helpers/modal.js";
 import { useRouter, useRoute } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
+import { notificationSymbol } from "../symbols/notification";
 
+const { setNotification } = inject(notificationSymbol);
 const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
@@ -28,13 +29,22 @@ const handleEditService = async () => {
     });
     if (newService) {
       loading.value = false;
-      modalAlert("Se ha editado el curso correctamente", "success");
+      setNotification({
+        message: "Se ha editado el curso correctamente",
+        type: "success",
+      });
       router.push("/admin/cursos");
     } else {
-      modalAlert("Ha ocurrido un error al intentar editar el curso", "error");
+      setNotification({
+        message: "Ha ocurrido un error al intentar editar el curso",
+        type: "warning",
+      });
     }
   } catch ({ message }) {
-    modalAlert(message, "error");
+    setNotification({
+      message,
+      type: "error",
+    });
   } finally {
     loading.value = false;
   }
@@ -44,8 +54,11 @@ onMounted(async () => {
   try {
     service.value = await getServiceById(route.params.id);
   } catch ({ message }) {
-    this.$router.push("/admin/cursos");
-    modalAlert(message, "error");
+    setNotification({
+      message,
+      type: "error",
+    });
+    router.push("/admin/cursos");
   } finally {
     loading.value = false;
   }
@@ -129,5 +142,3 @@ onMounted(async () => {
     </form>
   </section>
 </template>
-
-<style lang="scss" scoped></style>

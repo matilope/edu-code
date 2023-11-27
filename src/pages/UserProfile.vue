@@ -14,11 +14,11 @@ const { user, userLoading } = useUser(route.params.id);
       <div class="info">
         <template v-if="!userLoading">
           <h1 class="text-1xl md:text-2xl">
-            Perfil de {{ user.name || "..." }}
+            Perfil de {{ user.displayName || "..." }}
           </h1>
           <p>Este perfil puede ser visto por usuarios registrados</p>
           <router-link
-            :to="`/usuario/${user.id}/chat`"
+            :to="`/usuarios/${user.id}/chat`"
             class="text-green-700 underline mt-3"
             >Iniciar conversación con {{ user.email }}</router-link
           >

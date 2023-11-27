@@ -2,14 +2,17 @@
 import { subscribeToService, deleteService } from "../services/services.js";
 import { dateToString } from "../helpers/date.js";
 import { numberToCurrency } from "../helpers/price.js";
-import { modalConfirmation, modalAlert } from "../helpers/modal.js";
+import { modalConfirmation } from "../helpers/modal.js";
 import { useRouter } from "vue-router";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, inject } from "vue";
+import { notificationSymbol } from "../symbols/notification";
 
+const { setNotification } = inject(notificationSymbol);
 const router = useRouter();
 const loading = ref(true);
 const services = ref([]);
 let unSubscribeServices = () => {};
+
 
 const handleDeleteService = async (id) => {
   const result = await modalConfirmation(
@@ -20,13 +23,22 @@ const handleDeleteService = async (id) => {
     try {
       const deletedService = await deleteService(id);
       if (deletedService) {
-        modalAlert("Se ha eliminado correctamente", "success");
+        setNotification({
+          message: "Se ha eliminado correctamente",
+          type: "success",
+        });
       }
     } catch ({ message }) {
-      modalAlert(message, "error");
+      setNotification({
+        message,
+        type: "error",
+      });
     }
   } else {
-    modalAlert("No se ha eliminado el curso", "success");
+    setNotification({
+      message: "No se ha eliminado el curso",
+      type: "success",
+    });
   }
 };
 
@@ -146,5 +158,3 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped></style>

@@ -4,9 +4,11 @@ import { subscribeToAuth } from './../services/auth';
 export function useAuth() {
   const user = ref({
     id: null,
-    name: null,
+    displayName: null,
+    photoURL: null,
     email: null,
     role: null,
+    userLoaded: false
   });
   let unSubscribeAuth = () => {};
 

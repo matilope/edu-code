@@ -9,7 +9,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 const router = useRouter();
 const loading = ref(true);
 const services = ref([]);
-let unSubscribeServices = () => {}; 
+let unSubscribeServices = () => {};
 
 onMounted(async () => {
   loading.value = true;
@@ -39,34 +39,36 @@ onUnmounted(() => {
           v-for="service in services"
           :key="service.id"
         >
-          <img class="w-full" src="images/default.jpg" :alt="service.title" />
-          <div class="px-6 py-4">
-            <h2 class="font-bold text-xl mb-2" :title="service.title">
-              {{ service.title }}
-            </h2>
-            <p class="text-gray-700 text-base">
-              {{ service.description }}
-            </p>
-            <span class="price">{{ numberToCurrency(service.price) }}</span>
-            <span
-              class="date inline-block bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800"
-              >{{ dateToString(service.created_at) }}</span
-            >
-          </div>
-          <div class="px-6 pt-4 pb-2">
-            <span
-              class="inline-block bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 mr-2 mb-2"
-              >{{ service.level }}</span
-            >
-            <span
-              class="inline-block bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 mr-2 mb-2"
-              >{{ service.technologies }}</span
-            >
-            <span
-              class="inline-block bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 mr-2 mb-2"
-              >{{ service.duration }} horas</span
-            >
-          </div>
+          <router-link :to="'cursos/' + service.id">
+            <img class="w-full" src="images/default.jpg" :alt="service.title" />
+            <div class="px-6 py-4">
+              <h2 class="font-bold text-xl mb-2" :title="service.title">
+                {{ service.title }}
+              </h2>
+              <p class="text-gray-700 text-base">
+                {{ service.description }}
+              </p>
+              <span class="price">{{ numberToCurrency(service.price) }}</span>
+              <span
+                class="date inline-block bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800"
+                >{{ dateToString(service.created_at) }}</span
+              >
+            </div>
+            <div class="px-6 pt-4 pb-2">
+              <span
+                class="inline-block bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 mr-2 mb-2"
+                >{{ service.level }}</span
+              >
+              <span
+                class="inline-block bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 mr-2 mb-2"
+                >{{ service.technologies }}</span
+              >
+              <span
+                class="inline-block bg-yellow-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 mr-2 mb-2"
+                >{{ service.duration }} horas</span
+              >
+            </div>
+          </router-link>
         </article>
       </template>
       <template v-else>
@@ -75,5 +77,3 @@ onUnmounted(() => {
     </div>
   </section>
 </template>
-
-<style lang="scss" scoped></style>

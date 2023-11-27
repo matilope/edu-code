@@ -1,11 +1,13 @@
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from './firebase.js';
-import { createUser, getUserById } from './user.js';
+import { createUser, getUserById, updateUser } from './user.js';
+import { getFile, uploadFile } from './storage.js';
 
 let user = {
   id: null,
-  name: null,
+  displayName: null,
   email: null,
+  photoURL: null,
   role: null,
   userLoaded: false
 }
@@ -20,12 +22,13 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     setUser({
       id: user.uid,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
       email: user.email,
     });
     const userData = await getUserById(user.uid);
     if (userData) {
       setUser({
-        name: userData.name,
         role: userData.role,
         userLoaded: true
       });
@@ -35,10 +38,11 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-export async function register({ name, email, password }) {
+export async function register({ displayName, email, password }) {
   try {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
-    await createUser(user.uid, { name, email: user.email, role: 'user' });
+    await createUser(user.uid, { displayName, email: user.email, role: 'user' });
+    await updateProfile(auth.currentUser, { displayName });
     return { ...user }
   }
   catch ({ code, message }) {
@@ -91,10 +95,38 @@ function setUser(newUser) {
 }
 
 function clearUser() {
-  setUser({ id: null, name: null, email: null, role: null });
+  setUser({ id: null, displayName: null, email: null, photoURL: null, role: null, userLoaded: false });
   localStorage.removeItem('user');
 }
 
 export function getUser() {
   return { ...user };
+}
+
+export async function editUser({ displayName, photoURL }) {
+  const userData = {};
+  try {
+    if (displayName) userData.displayName = displayName;
+    if (photoURL) userData.photoURL = photoURL;
+    const promiseAuth = updateProfile(auth.currentUser, userData);
+    const promiseProfile = updateUser(user.id, userData);
+    await Promise.all([promiseAuth, promiseProfile]);
+    setUser(userData);
+  } catch ({ message }) {
+    throw new Error(message);
+  }
+}
+
+export async function editUserAvatar(file) {
+  const path = `users/${user.id}/avatar`;
+  try {
+    await uploadFile(path, file);
+    const photoURL = await getFile(path);
+    return editUser({
+      photoURL,
+    });
+  }
+  catch ({ message }) {
+    throw new Error(message);
+  }
 }

@@ -5,10 +5,11 @@ import PrimaryLabel from "../components/PrimaryLabel.vue";
 import PrimaryTextarea from "../components/PrimaryTextarea.vue";
 import PrimarySelect from "../components/PrimarySelect.vue";
 import { saveService } from "../services/services.js";
-import { modalAlert } from "../helpers/modal.js";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, inject } from "vue";
+import { notificationSymbol } from "../symbols/notification";
 
+const { setNotification } = inject(notificationSymbol);
 const router = useRouter();
 const loading = ref(false);
 const service = ref({
@@ -26,13 +27,22 @@ const createService = async () => {
     const newService = await saveService(service.value);
     if (newService?.id) {
       loading.value = false;
-      modalAlert("Se ha creado el curso correctamente", "success");
+      setNotification({
+        message: "Se ha creado el curso correctamente",
+        type: "success",
+      });
       router.push("/admin/cursos");
     } else {
-      modalAlert("Ha ocurrido un error al intentar crear el curso", "error");
+      setNotification({
+        message: "Ha ocurrido un error al intentar crear el curso",
+        type: "warning",
+      });
     }
   } catch ({ message }) {
-    modalAlert(message, "error");
+    setNotification({
+        message,
+        type: "error",
+      });
   } finally {
     loading.value = false;
   }
@@ -126,5 +136,3 @@ const createService = async () => {
     </form>
   </section>
 </template>
-
-<style lang="scss" scoped></style>

@@ -3,17 +3,16 @@ import PrimaryButton from "../components/PrimaryButton.vue";
 import PrimaryInput from "../components/PrimaryInput.vue";
 import PrimaryLabel from "../components/PrimaryLabel.vue";
 import { logIn } from "../services/auth.js";
-import { modalAlert } from "../helpers/modal.js";
-import { ref } from "vue";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
+import { ref, inject } from "vue";
+import { notificationSymbol } from "../symbols/notification";
 
+const { setNotification } = inject(notificationSymbol);
 const loading = ref(false);
-
 const user = ref({
   email: "",
   password: "",
 });
-
 const router = useRouter();
 
 const handleLogIn = async () => {
@@ -21,12 +20,22 @@ const handleLogIn = async () => {
   try {
     const loginState = await logIn({ ...user.value });
     if (loginState.email === user.value.email) {
+      setNotification({
+        message: "Se ha iniciado sesión correctamente.",
+        type: "success",
+      });
       router.push("/perfil");
     } else {
-      modalAlert(loginState.message, "warning");
+      setNotification({
+        message: "Los datos no son correctos.",
+        type: "warning",
+      });
     }
   } catch ({ message }) {
-    modalAlert(message, "error");
+    setNotification({
+      message,
+      type: "error",
+    });
   } finally {
     loading.value = false;
   }

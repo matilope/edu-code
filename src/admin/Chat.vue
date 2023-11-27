@@ -8,12 +8,13 @@ import {
   sendPrivateMessage,
   subscribeToPrivateChat,
 } from "../services/chat.js";
-import { modalAlert } from "../helpers/modal";
 import { useRouter, useRoute } from "vue-router";
-import { onUnmounted, ref, watch } from "vue";
+import { onUnmounted, ref, watch, inject } from "vue";
 import { useAuth } from "../composition/useAuth";
 import { useUser } from "../composition/useUser";
+import { notificationSymbol } from "../symbols/notification";
 
+const { setNotification } = inject(notificationSymbol);
 const router = useRouter();
 const route = useRoute();
 const { user: authUser } = useAuth();
@@ -64,8 +65,11 @@ function usePrivateChat(senderUser, receiverUser) {
           (newMessages) => (messages.value = newMessages)
         );
       } catch ({ message }) {
+        setNotification({
+          message,
+          type: "error",
+        });
         router.push("/perfil");
-        modalAlert(message, "error");
       } finally {
         messagesLoading.value = false;
       }
@@ -86,7 +90,7 @@ function usePrivateChat(senderUser, receiverUser) {
 <template>
   <section>
     <h1 class="text-3xl md:text-4xl lg:text-5xl mb-8">
-      Chat con {{ user.name || "..." }}
+      Chat con {{ user.displayName || "..." }}
     </h1>
 
     <h2 class="sr-only">Mensajes</h2>

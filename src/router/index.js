@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-// createWebHistory necesitas un servidor, server side rendering (ssr)
-import { getUser, subscribeToAuth } from '../services/auth.js';
+import { subscribeToAuth } from '../services/auth.js';
 
 const routes = [
   {
@@ -10,6 +9,10 @@ const routes = [
   {
     path: '/cursos',
     component: () => import('../pages/Services.vue')
+  },
+  {
+    path: '/cursos/:id',
+    component: () => import('../pages/Service.vue')
   },
   {
     path: '/iniciar-sesion',
@@ -22,7 +25,7 @@ const routes = [
   {
     path: '/chat',
     component: () => import('../pages/Chat.vue'),
-    meta: { requiresAuth: true, role: 'user' }
+    meta: { requiresAuth: true }
   },
   {
     path: '/perfil',
@@ -30,29 +33,34 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/usuario/:id',
-    component: () => import('../pages/UserProfile.vue'),
-    meta: { requiresAuth: true, role: 'admin' }
+    path: '/usuarios',
+    component: () => import('../pages/UserList.vue'),
+    meta: { requiresAuth: true }
   },
   {
-    path: '/usuario/:id/chat',
+    path: '/usuarios/:id',
+    component: () => import('../pages/UserProfile.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/usuarios/:id/chat',
     component: () => import('../admin/Chat.vue'),
-    meta: { requiresAuth: true, role: 'admin' }
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin/cursos',
     component: () => import('../admin/Services.vue'),
-    meta: { requiresAuth: true, role: 'admin' }
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin/cursos/crear',
     component: () => import('../admin/CreateService.vue'),
-    meta: { requiresAuth: true, role: 'admin'}
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin/cursos/:id/editar',
     component: () => import('../admin/EditService.vue'),
-    meta: { requiresAuth: true, role: 'admin' }
+    meta: { requiresAuth: true }
   },
   {
     path: '/:catchAll(.*)',
@@ -67,7 +75,8 @@ const router = createRouter({
 
 let user = {
   id: null,
-  name: null,
+  displayName: null,
+  photoURL: null,
   email: null,
   role: null
 }
@@ -75,15 +84,14 @@ let user = {
 subscribeToAuth(newUser => user = newUser);
 
 router.beforeEach((to, from) => {
-  if (to.meta.requiresAuth) {
-    if (user.id === null) {
-      return '/iniciar-sesion';
-    }
-    /*
-    if (to.path === "/chat" && user.role === "admin") {
-      return '/perfil';
-    }
-    */
+  if (to.path === "/chat" && user.role === "admin") {
+    return '/perfil';
+  }
+  if (to.path === "/usuarios" && user.role !== "admin") {
+    return '/perfil';
+  }
+  if (user.id === null && to.meta.requiresAuth) {
+    return '/iniciar-sesion';
   }
 });
 

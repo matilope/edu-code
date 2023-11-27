@@ -8,14 +8,15 @@ import {
   sendPrivateMessage,
   subscribeToPrivateChat,
 } from "../services/chat.js";
-import { modalAlert } from "../helpers/modal";
 import { useRouter } from "vue-router";
-import { onUnmounted, ref, watch, onMounted } from "vue";
+import { onUnmounted, ref, onMounted, inject } from "vue";
 import { useAuth } from "../composition/useAuth";
+import { notificationSymbol } from "../symbols/notification";
 
+const { setNotification } = inject(notificationSymbol);
 const router = useRouter();
 const { user: authUser } = useAuth();
-const adminId = ref({id: "RzfSLE6IlIRpb8kuDETD34I0rE82"});
+const adminId = ref({ id: "RzfSLE6IlIRpb8kuDETD34I0rE82" });
 const { newMessage, messages, messagesLoading, sendMessage } = usePrivateChat(
   authUser,
   adminId
@@ -43,7 +44,7 @@ function usePrivateChat(senderUser, receiverUser) {
   let unSubscribeMessage = () => {};
 
   async function sendMessage() {
-    await sendPrivateMessage({
+    sendPrivateMessage({
       senderId: senderUser.value.id,
       receiverId: receiverUser.value.id,
       message: newMessage.value,
@@ -51,28 +52,7 @@ function usePrivateChat(senderUser, receiverUser) {
     newMessage.value = "";
   }
 
-  /*
- watch(receiverUser, async (newReceiverUser) => {
-  console.log(newReceiverUser);
-    if (newReceiverUser.id !== null) {
-      try {
-        unSubscribeMessage = await subscribeToPrivateChat(
-          {
-            senderId: senderUser.value.id,
-            receiverId: newReceiverUser.id,
-          },
-          (newMessages) => (messages.value = newMessages)
-        );
-      } catch ({ message }) {
-        router.push("/perfil");
-        modalAlert(message, "error");
-      } finally {
-        messagesLoading.value = false;
-      }
-    }
-  });*/
-
- onMounted(async () => {
+  onMounted(async () => {
     try {
       unSubscribeMessage = await subscribeToPrivateChat(
         {
@@ -81,10 +61,12 @@ function usePrivateChat(senderUser, receiverUser) {
         },
         (newMessages) => (messages.value = newMessages)
       );
-      console.log(messages.value);
     } catch ({ message }) {
+      setNotification({
+        message,
+        type: "error",
+      });
       router.push("/perfil");
-      modalAlert(message, "error");
     } finally {
       messagesLoading.value = false;
     }

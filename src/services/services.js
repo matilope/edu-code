@@ -14,7 +14,7 @@ export async function editService(id, data) {
   try {
     await updateDoc(doc(db, `services/${id}`), data);
     return true;
-  } catch ({message}) {
+  } catch ({ message }) {
     return false;
   }
 }
@@ -24,7 +24,7 @@ export async function deleteService(id) {
   try {
     await deleteDoc(refService);
     return true;
-  } catch ({message}) {
+  } catch ({ message }) {
     return false;
   }
 }
@@ -32,16 +32,21 @@ export async function deleteService(id) {
 export async function getServiceById(id) {
   try {
     const docSnapshot = await getDoc(doc(db, `services/${id}`));
+    if (!docSnapshot.exists()) {
+      return {
+        id: null,
+        title: null,
+        description: null,
+        duration: null,
+        level: null,
+        technologies: null,
+        price: null,
+        created_at: null,
+      }
+    }
     return {
       id: docSnapshot.id,
-      title: docSnapshot.data().title,
-      description: docSnapshot.data().description,
-      description: docSnapshot.data().description,
-      duration: docSnapshot.data().duration,
-      level: docSnapshot.data().level,
-      technologies: docSnapshot.data().technologies,
-      price: docSnapshot.data().price,
-      created_at: docSnapshot.data().created_at?.toDate(),
+      ...docSnapshot.data()
     }
   } catch (err) {
     return false;
@@ -53,13 +58,7 @@ export function subscribeToService(callback) {
     const data = snapshot.docs.map(doc => {
       return {
         id: doc.id,
-        title: doc.data().title,
-        description: doc.data().description,
-        duration: doc.data().duration,
-        level: doc.data().level,
-        technologies: doc.data().technologies,
-        price: doc.data().price,
-        created_at: doc.data().created_at?.toDate()
+        ...doc.data()
       }
     });
     callback(data);
