@@ -100,6 +100,7 @@ function useAvatarEdit() {
         message: "Tu foto de perfil se actualizó correctamente.",
         type: "success",
       });
+      handleAvatarCancel();
     } catch ({ message }) {
       setNotification({
         message,
@@ -386,7 +387,7 @@ function useAvatarEdit() {
             </div>
             <div class="flex items-center gap-3 mt-5">
               <PrimaryButton :loading="editingAvatarLoading"
-                >Actualizar mi Imagen de Perfil</PrimaryButton
+                >Actualizar imagen de perfil</PrimaryButton
               >
               <PrimaryButton
                 @click="handleAvatarCancel"
