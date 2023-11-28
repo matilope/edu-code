@@ -25,42 +25,42 @@ const routes = [
   {
     path: '/chat',
     component: () => import('../pages/Chat.vue'),
-    meta: { requiresAuth: true, role: "user" }
+    meta: { requiresAuth: true, roles: ["user"] }
   },
   {
     path: '/perfil',
     component: () => import('../pages/Profile.vue'),
-    meta: { requiresAuth: true, role: ["admin", "user"] }
+    meta: { requiresAuth: true, roles: ["admin", "user"] }
   },
   {
     path: '/usuarios',
     component: () => import('../pages/UserList.vue'),
-    meta: { requiresAuth: true, role: "admin" }
+    meta: { requiresAuth: true, roles: ["admin"] }
   },
   {
     path: '/usuarios/:id',
     component: () => import('../pages/UserProfile.vue'),
-    meta: { requiresAuth: true, role: "admin" }
+    meta: { requiresAuth: true, roles: ["admin"] }
   },
   {
     path: '/usuarios/:id/chat',
     component: () => import('../admin/Chat.vue'),
-    meta: { requiresAuth: true, role: "admin" }
+    meta: { requiresAuth: true, roles: ["admin"] }
   },
   {
     path: '/admin/cursos',
     component: () => import('../admin/Services.vue'),
-    meta: { requiresAuth: true, role: "admin" }
+    meta: { requiresAuth: true, roles: ["admin"] }
   },
   {
     path: '/admin/cursos/crear',
     component: () => import('../admin/CreateService.vue'),
-    meta: { requiresAuth: true, role: "admin" }
+    meta: { requiresAuth: true, roles: ["admin"] }
   },
   {
     path: '/admin/cursos/:id/editar',
     component: () => import('../admin/EditService.vue'),
-    meta: { requiresAuth: true, role: "admin" }
+    meta: { requiresAuth: true, roles: ["admin"] }
   },
   {
     path: '/:catchAll(.*)',
@@ -75,22 +75,19 @@ const router = createRouter({
 
 let user = {
   id: null,
-  displayName: null,
-  photoURL: null,
-  email: null,
   role: null
 }
 
 subscribeToAuth(newUser => user = newUser);
 
 router.beforeEach((to, from) => {
-  if (to.meta.requiresAuth) {
-    if (user.id === null) {
-      return '/iniciar-sesion';
-    } else if (to.meta.role && user.role !== to.meta.role && !to.meta.role.includes(user.role)) {
-      return '/perfil';
-    }
+  if (user.id === null && to.meta.requiresAuth) {
+    return '/iniciar-sesion';
   }
+  if (from.path != "/iniciar-sesion" && from.path != "/registro" && user.id != null && to.meta.roles && !to.meta.roles.includes(user.role)) {
+    return '/perfil';
+  }
+  return;
 });
 
 export default router;

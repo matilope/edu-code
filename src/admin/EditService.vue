@@ -13,12 +13,12 @@ const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
 const service = ref({
-  title: null,
-  description: null,
-  duration: null,
-  level: null,
-  technologies: null,
-  price: null,
+  title: "",
+  description: "",
+  duration: "",
+  level: "",
+  technologies: "",
+  price: "",
 });
 
 const handleEditService = async () => {

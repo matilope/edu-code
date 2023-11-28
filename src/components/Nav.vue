@@ -140,6 +140,13 @@ function useLogOut() {
                       >Crear curso</router-link
                     >
                   </li>
+                  <li>
+                    <router-link
+                      class="hover:bg-gray-200 text-md text-black rounded-md px-3 py-2 font-medium"
+                      to="/usuarios"
+                      >Listado de usuarios</router-link
+                    >
+                  </li>
                 </template>
               </template>
             </ul>
@@ -233,8 +240,13 @@ function useLogOut() {
               to="/admin/cursos/crear"
               >Crear curso</router-link
             >
+            <router-link
+              class="hover:bg-gray-200 text-md text-black rounded-md px-3 py-2 font-medium"
+              to="/usuarios"
+              >Listado de usuarios</router-link
+            >
           </template>
-          <form class="block" action="#" @submit.prevent="handleLogOut">
+          <form class="block mt-6 pl-3" action="#" @submit.prevent="handleLogOut">
             <button
               class="px-6 py-2.5 bg-yellow-600 hover:bg-yellow-500 text-sm text-white font-bold rounded-md transition duration-200"
               type="submit"

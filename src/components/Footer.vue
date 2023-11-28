@@ -5,12 +5,12 @@ const { user } = useAuth();
 </script>
 
 <template>
-  <footer class="bg-white shadow dark:bg-gray-900">
+  <footer class="bg-white shadow border-t border-gray-100 dark:bg-gray-900">
     <div class="container m-auto p-4 md:py-8">
       <div class="sm:flex sm:items-center sm:justify-between">
         <router-link
           to="/"
-          class="flex items-center mb-4 sm:mb-0 footer-educode"
+          class="flex items-center mb-6 sm:mb-0 footer-educode"
         >
           <img src="images/logo.png" class="h-8 mr-3" alt="EduCode Logo" />
           <span

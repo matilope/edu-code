@@ -8,6 +8,7 @@ export function useAuth() {
     photoURL: null,
     email: null,
     role: null,
+    services: [],
     userLoaded: false
   });
   let unSubscribeAuth = () => {};

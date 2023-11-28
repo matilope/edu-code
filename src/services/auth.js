@@ -9,6 +9,7 @@ let user = {
   email: null,
   photoURL: null,
   role: null,
+  services: [],
   userLoaded: false
 }
 
@@ -23,13 +24,14 @@ onAuthStateChanged(auth, async (user) => {
     setUser({
       id: user.uid,
       displayName: user.displayName,
-      photoURL: user.photoURL,
       email: user.email,
+      photoURL: user.photoURL
     });
     const userData = await getUserById(user.uid);
     if (userData) {
       setUser({
         role: userData.role,
+        services: userData.services || [],
         userLoaded: true
       });
     }
@@ -95,7 +97,7 @@ function setUser(newUser) {
 }
 
 function clearUser() {
-  setUser({ id: null, displayName: null, email: null, photoURL: null, role: null, userLoaded: false });
+  setUser({ id: null, displayName: null, email: null, photoURL: null, role: null, services: [], userLoaded: false });
   localStorage.removeItem('user');
 }
 

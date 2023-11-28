@@ -13,12 +13,12 @@ const { setNotification } = inject(notificationSymbol);
 const router = useRouter();
 const loading = ref(false);
 const service = ref({
-  title: null,
-  description: null,
-  duration: null,
-  level: null,
-  technologies: null,
-  price: null,
+  title: "",
+  description: "",
+  duration: "",
+  level: "",
+  technologies: "",
+  price: "",
 });
 
 const createService = async () => {

@@ -1,42 +1,20 @@
 <script setup>
-import { subscribeToService } from "../services/services.js";
 import { dateToString } from "../helpers/date.js";
 import { numberToCurrency } from "../helpers/price.js";
 import Loader from "../components/Loader.vue";
-import { useRouter } from "vue-router";
-import { ref, onMounted, onUnmounted } from "vue";
+import { useServices } from "../composition/useService";
 
-const router = useRouter();
-const loading = ref(true);
-const services = ref([]);
-let unSubscribeServices = () => {};
-
-onMounted(async () => {
-  loading.value = true;
-  try {
-    unSubscribeServices = subscribeToService(
-      (newServices) => (services.value = newServices)
-    );
-  } catch (err) {
-    router.push("/");
-  } finally {
-    loading.value = false;
-  }
-});
-
-onUnmounted(() => {
-  unSubscribeServices();
-});
+const { services: servicesData, servicesLoading } = useServices();
 </script>
 
 <template>
   <section>
     <h1 class="text-3xl md:text-4xl lg:text-5xl mb-8">Cursos</h1>
     <div class="services">
-      <template v-if="!loading">
+      <template v-if="!servicesLoading">
         <article
           class="max-w-sm rounded overflow-hidden shadow-lg"
-          v-for="service in services"
+          v-for="service in servicesData"
           :key="service.id"
         >
           <router-link :to="'cursos/' + service.id">

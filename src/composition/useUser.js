@@ -12,7 +12,8 @@ export function useUser(id) {
     displayName: null,
     photoURL: null,
     email: null,
-    role: null
+    role: null,
+    services: []
   });
 
   onMounted(async () => {

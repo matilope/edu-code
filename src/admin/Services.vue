@@ -1,5 +1,5 @@
 <script setup>
-import { subscribeToService, deleteService } from "../services/services.js";
+import { subscribeToServices, deleteService } from "../services/services.js";
 import { dateToString } from "../helpers/date.js";
 import { numberToCurrency } from "../helpers/price.js";
 import { modalConfirmation } from "../helpers/modal.js";
@@ -45,7 +45,7 @@ const handleDeleteService = async (id) => {
 onMounted(async () => {
   loading.value = true;
   try {
-    unSubscribeServices = subscribeToService(
+    unSubscribeServices = subscribeToServices(
       (newServices) => (services.value = newServices)
     );
   } catch (err) {

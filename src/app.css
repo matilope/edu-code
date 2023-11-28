@@ -290,12 +290,24 @@ img {
   fill: rgb(21, 128, 61);
 }
 
+.modal-success .btn-confirmation {
+  background-color: rgb(21, 128, 61);
+}
+
 .modal-warning svg {
   fill: rgb(161, 98, 7)
 }
 
+.modal-warning .btn-confirmation {
+  background-color: rgb(161, 98, 7)
+}
+
 .modal-error svg {
   fill: rgb(185, 28, 28);
+}
+
+.modal-error .btn-confirmation {
+  background-color: rgb(185, 28, 28);
 }
 
 .modal div:first-of-type {

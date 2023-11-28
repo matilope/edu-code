@@ -18,6 +18,13 @@ provide(notificationSymbol, {
   notification: readonly(notification),
   setNotification,
 });
+
+setTimeout(() => {
+  setNotification({
+    message: null,
+    type: "success",
+  });
+}, 2000);
 </script>
 
 <template>

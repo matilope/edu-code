@@ -1,5 +1,5 @@
-import { onMounted, ref, inject } from "vue";
-import { getServiceById } from "../services/services";
+import { onMounted, ref, inject, onUnmounted } from "vue";
+import { getServiceById, subscribeToServices } from "../services/services";
 import { useRouter } from "vue-router";
 import { notificationSymbol } from "../symbols/notification";
 
@@ -37,5 +37,23 @@ export function useService(id) {
   return {
     service,
     serviceLoading,
+  }
+}
+
+export function useServices() {
+  const servicesLoading = ref(true);
+  const services = ref([]);
+  let unSubscribeServices = () => {};
+
+  onMounted(() => {
+    unSubscribeServices = subscribeToServices(newServices => services.value = [...newServices]);
+    servicesLoading.value = false;
+  });
+
+  onUnmounted(() => unSubscribeServices());
+
+  return {
+    services,
+    servicesLoading
   }
 }

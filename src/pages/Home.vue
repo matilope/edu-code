@@ -1,13 +1,13 @@
 <template>
   <div class="text-gray-800">
     <div
-      class="md:bg-[url('images/home.jpg')] bg-cover md:h-[50vh] rounded container mx-auto p-8 flex justify-center md:justify-start items-center md:items-end space-x-10"
+      class="bg-[url('images/home.jpg')] bg-cover md:h-[50vh] rounded container mx-auto p-2 sm:p-4 md:p-8 flex justify-center md:justify-start items-center md:items-end space-x-10"
     >
-      <div class="md:w-[60%] w-[100%] text-center md:text-start banner">
-        <h1 class="text-4xl font-semibold text-gray-800 md:text-white mb-4">
+      <div class="md:w-[80%] lg:w-[50%] w-[100%] text-center md:text-start banner">
+        <h1 class="text-4xl font-semibold text-white mb-4">
           Bienvenidos a EduCode
         </h1>
-        <p class="text-gray-500 md:text-white">
+        <p class="text-white">
           En EduCode, nuestro compromiso es impulsar tu éxito en el mundo de la
           programación. Como tu aliado en el aprendizaje de tecnologías clave
           como HTML5, CSS3, JavaScript y Angular, te ofrecemos cursos de alta

@@ -53,7 +53,7 @@ export async function getServiceById(id) {
   }
 }
 
-export function subscribeToService(callback) {
+export function subscribeToServices(callback) {
   return onSnapshot(query(refService, orderBy('created_at', 'desc')), (snapshot) => {
     const data = snapshot.docs.map(doc => {
       return {

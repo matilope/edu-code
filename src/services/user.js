@@ -11,7 +11,8 @@ export async function getUserById(id) {
         displayName: null,
         photoURL: null,
         email: null,
-        role: null
+        role: null,
+        services: []
       }
     }
     return {
@@ -41,4 +42,12 @@ export function subscribeToUsers(callback) {
 
 export async function updateUser(id, data) {
   return updateDoc(doc(db, `users/${id}`), { ...data });
+}
+
+export async function hireService(user) {
+  try {
+    await updateUser(user.value.id, { services: user.value.services });
+  } catch ({ message }) {
+    throw new Error(message);
+  }
 }

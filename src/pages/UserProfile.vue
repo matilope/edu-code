@@ -1,5 +1,4 @@
 <script setup>
-import PrimaryButton from "../components/PrimaryButton.vue";
 import { numberToCurrency } from "../helpers/price.js";
 import { useRoute } from "vue-router";
 import { useUser } from "../composition/useUser";
@@ -110,7 +109,7 @@ const { user, userLoading } = useUser(route.params.id);
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="service in services">
+                  <template v-for="service in user.services">
                     <tr
                       class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
                     >
@@ -118,7 +117,8 @@ const { user, userLoading } = useUser(route.params.id);
                         scope="row"
                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                       >
-                        <img :src="service.image" :alt="service.title" />
+                        <img class="rounded-md" :src="service.image" :alt="service.title" v-if="service.image" />
+                        <img class="rounded-md" src="images/default.jpg" :alt="service.title" v-else />
                       </th>
                       <td class="px-6 py-4">
                         {{ service.title }}
@@ -128,7 +128,7 @@ const { user, userLoading } = useUser(route.params.id);
                       </td>
                       <td class="px-6 py-4">
                         <router-link
-                          :to="'cursos/' + service.id"
+                          :to="'../cursos/' + service.id"
                           class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                           >Ver</router-link
                         >

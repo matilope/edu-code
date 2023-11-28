@@ -5,8 +5,12 @@ import { dateToString } from "../helpers/date.js";
 import { numberToCurrency } from "../helpers/price.js";
 import { useService } from "../composition/useService";
 import { useAuth } from "../composition/useAuth";
-import { ref } from "vue";
+import { ref, inject, watchEffect } from "vue";
+import { hireService } from "../services/user";
+import { notificationSymbol } from "../symbols/notification";
+import { modalConfirmation } from "../helpers/modal";
 
+const { setNotification } = inject(notificationSymbol);
 const route = useRoute();
 const { service, serviceLoading } = useService(route.params.id);
 const { user } = useAuth();
@@ -27,6 +31,46 @@ const toggle = (type) => {
       isLevelOpen.value = !isLevelOpen.value;
   }
 };
+
+const hiring = async () => {
+  const result = await modalConfirmation(
+    "¿Estas seguro de contratar el curso?",
+    "success"
+  );
+  if (result) {
+    try {
+      user.value.services.push({
+        id: service.value.id,
+        title: service.value.title,
+        price: service.value.price,
+      });
+      await hireService(user);
+      setNotification({
+        message: "Has contratado el curso exitosamente.",
+        type: "success",
+      });
+    } catch ({ message }) {
+      setNotification({
+        message,
+        type: "error",
+      });
+    }
+  } else {
+    setNotification({
+      message: "No se ha contratado el curso.",
+      type: "warning",
+    });
+  }
+};
+
+const alreadyBought = ref(false);
+watchEffect(() => {
+  if (serviceLoading && user?.value?.services?.length > 0) {
+    alreadyBought.value = user.value.services.some(
+      (boughtService) => boughtService.id === service.value.id
+    );
+  }
+});
 </script>
 
 <template>
@@ -270,22 +314,33 @@ const toggle = (type) => {
                 numberToCurrency(service.price)
               }}</span>
             </div>
-            <template v-if="user.role">
-              <button
-                data-id="{{ $service->id }}"
-                data-name="{{ $service->destiny->name }}"
-                type="button"
-                class="inline-flex items-center justify-center rounded-md border-2 border-transparent bg-green-500 bg-none px-12 py-3 text-center text-base font-bold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-green-600"
+            <template v-if="alreadyBought">
+              <span
+                class="inline-flex items-center justify-center rounded-md border-2 border-transparent opacity-50 bg-red-500 bg-none px-12 py-3 text-center text-base font-bold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-red-600"
               >
-                Contratar
-              </button>
+                Contratado
+              </span>
             </template>
             <template v-else>
-              <router-link
-                to="/registro"
-                class="inline-flex items-center justify-center rounded-md border-2 border-transparent bg-orange-500 bg-none px-12 py-3 text-center text-base font-bold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-orange-600"
-                >Registrarse para contratar</router-link
-              >
+              <template v-if="user.role">
+                <form action="#" method="post" @submit.prevent="hiring">
+                  <button
+                    data-id="{{ $service->id }}"
+                    data-name="{{ $service->destiny->name }}"
+                    type="submit"
+                    class="inline-flex items-center justify-center rounded-md border-2 border-transparent bg-green-500 bg-none px-12 py-3 text-center text-base font-bold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-green-600"
+                  >
+                    Contratar
+                  </button>
+                </form>
+              </template>
+              <template v-else>
+                <router-link
+                  to="/registro"
+                  class="inline-flex items-center justify-center rounded-md border-2 border-transparent bg-orange-500 bg-none px-12 py-3 text-center text-base font-bold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-orange-600"
+                  >Registrarse para contratar</router-link
+                >
+              </template>
             </template>
           </div>
         </div>

@@ -253,7 +253,7 @@ function useAvatarEdit() {
           <hr class="w-full h-px border-neutral-200" />
           <h2 class="text-2xl my-3">Servicios contratados</h2>
           <div class="hired-services-container my-4">
-            <template v-if="user.services">
+            <template v-if="user.services.length">
               <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table
                   class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
@@ -269,7 +269,7 @@ function useAvatarEdit() {
                     </tr>
                   </thead>
                   <tbody>
-                    <template v-for="service in services">
+                    <template v-for="service in user.services">
                       <tr
                         class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
                       >
@@ -277,7 +277,8 @@ function useAvatarEdit() {
                           scope="row"
                           class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                         >
-                          <img :src="service.image" :alt="service.title" />
+                          <img class="rounded-md" :src="service.image" :alt="service.title" v-if="service.image" />
+                          <img class="rounded-md" src="images/default.jpg" :alt="service.title" v-else />
                         </th>
                         <td class="px-6 py-4">
                           {{ service.title }}

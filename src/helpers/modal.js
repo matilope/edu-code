@@ -19,7 +19,7 @@ export async function modalConfirmation(t, status) {
     modalBackground.classList.add("modal-background");
     modal.classList.add("modal", `modal-${status}`);
     text.classList.add("my-4", "text-lg", "font-normal", "text-gray-700", "dark:text-gray-400");
-    confirmation.classList.add("bg-red-600", "hover:bg-red-500");
+    confirmation.classList.add("btn-confirmation");
     cancel.classList.add("bg-gray-500", "hover:bg-gray-400");
 
     modal.setAttribute("role", "alert");
