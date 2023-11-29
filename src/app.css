@@ -214,6 +214,8 @@ img {
 .services img {
   margin-bottom: 1rem;
   border-radius: .25rem;
+  height: 260px;
+  object-fit: contain;
 }
 
 @media (max-width:1200px) {

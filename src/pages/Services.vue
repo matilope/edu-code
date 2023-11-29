@@ -18,7 +18,8 @@ const { services: servicesData, servicesLoading } = useServices();
           :key="service.id"
         >
           <router-link :to="'cursos/' + service.id">
-            <img class="w-full" src="images/default.jpg" :alt="service.title" />
+            <img class="w-full" :src="service.image" :alt="service.image_description ? service.image_description : service.title" v-if="service.image" />
+            <img class="w-full" src="images/default.jpg" :alt="service.image_description ? service.image_description : service.title" v-else />
             <div class="px-6 py-4">
               <h2 class="font-bold text-xl mb-2" :title="service.title">
                 {{ service.title }}

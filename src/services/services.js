@@ -1,18 +1,35 @@
 import { db } from './firebase.js';
 import { addDoc, collection, onSnapshot, getDoc, serverTimestamp, doc, query, orderBy, deleteDoc, updateDoc } from 'firebase/firestore';
+import { getFile, uploadFile, deleteFile } from './storage.js';
 
 const refService = collection(db, 'services');
 
 export async function saveService(data) {
-  return addDoc(refService, {
-    ...data,
-    created_at: serverTimestamp()
-  });
+  try {
+    const document = await addDoc(refService, {
+      ...data,
+      image: null,
+      created_at: serverTimestamp()
+    });
+    await editService(document.id, { image: data.image });
+    return true;
+  } catch ({ message }) {
+    return false;
+  }
 }
 
 export async function editService(id, data) {
+  //const title = data.title.split(" ").join("").split(".").join("");
+  const path = `services/${id}/image`;
   try {
-    await updateDoc(doc(db, `services/${id}`), data);
+    if (data.image) {
+      await uploadFile(path, data.image);
+      const photoURL = await getFile(path);
+      data.image = photoURL;
+    } else {
+      data.image = null;
+    }
+    await updateDoc(doc(db, `services/${id}`), { ...data });
     return true;
   } catch ({ message }) {
     return false;
@@ -21,8 +38,10 @@ export async function editService(id, data) {
 
 export async function deleteService(id) {
   const refService = doc(db, 'services', id);
+  const path = refService.path + "/image";
   try {
     await deleteDoc(refService);
+    await deleteFile(path);
     return true;
   } catch ({ message }) {
     return false;
@@ -41,6 +60,8 @@ export async function getServiceById(id) {
         level: null,
         technologies: null,
         price: null,
+        image: null,
+        image_description: null,
         created_at: null,
       }
     }

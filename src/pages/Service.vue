@@ -43,6 +43,7 @@ const hiring = async () => {
         id: service.value.id,
         title: service.value.title,
         price: service.value.price,
+        image: service.value.image
       });
       await hireService(user);
       setNotification({
@@ -80,11 +81,8 @@ watchEffect(() => {
         <div class="lg:flex justify-center w-full sm:w-[50%]">
           <div class="lg:order-2 lg:ml-5">
             <div class="max-w-xl overflow-hidden rounded-lg mb-3">
-              <img
-                class="h-full w-auto sm:w-full mx-auto object-contain"
-                src="images/default.jpg"
-                :alt="service.title"
-              />
+              <img class="h-full w-auto sm:w-full mx-auto object-contain p-3" :src="service.image" :alt="service.image_description ? service.image_description : service.title" v-if="service.image" />
+              <img class="h-full w-auto sm:w-full mx-auto object-contain" src="images/default.jpg" :alt="service.image_description ? service.image_description : service.title" v-else />
             </div>
           </div>
         </div>

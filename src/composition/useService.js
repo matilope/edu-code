@@ -15,7 +15,9 @@ export function useService(id) {
     created_at: null,
     level: null,
     technologies: null,
-    duration: null
+    duration: null,
+    image: null,
+    image_description: null
   });
 
   onMounted(async () => {

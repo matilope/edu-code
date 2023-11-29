@@ -1,20 +1,17 @@
 <script setup>
-import { subscribeToServices, deleteService } from "../services/services.js";
+import { deleteService } from "../services/services.js";
 import { dateToString } from "../helpers/date.js";
 import { numberToCurrency } from "../helpers/price.js";
 import { modalConfirmation } from "../helpers/modal.js";
-import { useRouter } from "vue-router";
-import { ref, onMounted, onUnmounted, inject } from "vue";
+import { inject } from "vue";
 import { notificationSymbol } from "../symbols/notification";
+import { useServices } from "../composition/useService";
+import Loader from "../components/Loader.vue";
 
 const { setNotification } = inject(notificationSymbol);
-const router = useRouter();
-const loading = ref(true);
-const services = ref([]);
-let unSubscribeServices = () => {};
+const { services, servicesLoading } = useServices();
 
-
-const handleDeleteService = async (id) => {
+const handleDeleteService = async (id, image) => {
   const result = await modalConfirmation(
     "¿Estas seguro de eliminar el curso?",
     "error"
@@ -41,27 +38,12 @@ const handleDeleteService = async (id) => {
     });
   }
 };
-
-onMounted(async () => {
-  loading.value = true;
-  try {
-    unSubscribeServices = subscribeToServices(
-      (newServices) => (services.value = newServices)
-    );
-  } catch (err) {
-    router.push("/");
-  } finally {
-    loading.value = false;
-  }
-});
-
-onUnmounted(() => {
-  unSubscribeServices();
-});
 </script>
 
 <template>
+  <loader v-if="servicesLoading" />
   <div
+    v-else
     class="relative flex w-full flex-col rounded-[10px] border-[1px] border-gray-200 bg-white bg-clip-border shadow-md shadow-[#F3F3F3] dark:border-[#ffffff33] dark:!bg-navy-800 dark:text-white dark:shadow-none"
   >
     <div
