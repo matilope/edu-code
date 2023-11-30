@@ -18,11 +18,16 @@ const handleDeleteService = async (id, image) => {
   );
   if (result) {
     try {
-      const deletedService = await deleteService(id);
-      if (deletedService) {
+      const deletion = await deleteService(id);
+      if (deletion.status) {
         setNotification({
           message: "Se ha eliminado correctamente",
           type: "success",
+        });
+      } else {
+        setNotification({
+          message: deletion,
+          type: "warning",
         });
       }
     } catch ({ message }) {

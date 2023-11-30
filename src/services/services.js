@@ -12,9 +12,9 @@ export async function saveService(data) {
       created_at: serverTimestamp()
     });
     await editService(document.id, { image: data.image });
-    return true;
+    return { status: true };
   } catch ({ message }) {
-    return false;
+    return message;
   }
 }
 
@@ -22,17 +22,15 @@ export async function editService(id, data) {
   //const title = data.title.split(" ").join("").split(".").join("");
   const path = `services/${id}/image`;
   try {
-    if (data.image) {
+    if (data.image.name) {
       await uploadFile(path, data.image);
       const photoURL = await getFile(path);
       data.image = photoURL;
-    } else {
-      data.image = null;
     }
     await updateDoc(doc(db, `services/${id}`), { ...data });
-    return true;
+    return { status: true };
   } catch ({ message }) {
-    return false;
+    return message;
   }
 }
 
@@ -42,9 +40,9 @@ export async function deleteService(id) {
   try {
     await deleteDoc(refService);
     await deleteFile(path);
-    return true;
+    return { status: true };
   } catch ({ message }) {
-    return false;
+    return message;
   }
 }
 

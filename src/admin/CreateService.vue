@@ -40,11 +40,11 @@ const handleServiceFileChange = (event) => {
 const createService = async () => {
   loading.value = true;
   try {
-    const newService = await saveService({
+    const creation = await saveService({
       ...service.value,
       image: createServiceImage.value.file,
     });
-    if (newService) {
+    if (creation.status) {
       loading.value = false;
       setNotification({
         message: "Se ha creado el curso correctamente",
@@ -53,7 +53,7 @@ const createService = async () => {
       router.push("/admin/cursos");
     } else {
       setNotification({
-        message: "Ha ocurrido un error al intentar crear el curso",
+        message: creation,
         type: "warning",
       });
     }
@@ -205,7 +205,12 @@ const createService = async () => {
           alt=""
         />
       </div>
-      <PrimaryButton type="submit" :disabled="loading" :loading="loading">
+      <PrimaryButton
+        type="submit"
+        class="w-full"
+        :disabled="loading"
+        :loading="loading"
+      >
         Subir
       </PrimaryButton>
     </form>

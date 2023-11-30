@@ -7,7 +7,8 @@ import { useAuth } from "../composition/useAuth.js";
 import { editUser, editUserAvatar } from "../services/auth";
 import { notificationSymbol } from "../symbols/notification";
 import { numberToCurrency } from "../helpers/price.js";
-import Loader from "../components/Loader.vue";
+import ProfileLoader from "../components/ProfileLoader.vue";
+import ProfileImage from "../components/ProfileImage.vue";
 
 const { setNotification } = inject(notificationSymbol);
 const { user } = useAuth();
@@ -142,18 +143,7 @@ function useAvatarEdit() {
           <div class="flex flex-wrap mb-6 xl:flex-nowrap">
             <div class="mb-5 mr-5">
               <div class="relative inline-block shrink-0 rounded-2xl">
-                <img
-                  v-if="user.photoURL"
-                  class="inline-block shrink-0 rounded-2xl w-[80px] h-[80px] lg:w-[160px] lg:h-[160px]"
-                  :src="user.photoURL"
-                  :alt="'Perfil de ' + user.displayName"
-                />
-                <img
-                  v-else
-                  class="inline-block shrink-0 rounded-2xl w-[80px] h-[80px] lg:w-[160px] lg:h-[160px]"
-                  src="images/user.png"
-                  :alt="'Perfil de ' + user.displayName"
-                />
+                <ProfileImage :src="user.photoURL" :name="user.displayName" class="inline-block shrink-0 rounded-2xl w-[160px] h-[160px] lg:w-[200px] lg:h-[200px] profile-image" />
                 <button
                   class="btn-change-image"
                   @click="handleAvatarShow"
@@ -402,7 +392,7 @@ function useAvatarEdit() {
       </template>
     </template>
     <template v-else>
-      <Loader class="flex justify-center my-4" />
+      <ProfileLoader class="flex justify-center my-4" />
     </template>
   </section>
 </template>

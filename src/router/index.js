@@ -84,6 +84,7 @@ router.beforeEach((to, from) => {
   if (user.id === null && to.meta.requiresAuth) {
     return '/iniciar-sesion';
   }
+  // Si no lo hago de esta forma, hace un reload infinito por el router.push() de esos componentes (login y registro).
   if (from.path != "/iniciar-sesion" && from.path != "/registro" && user.id != null && to.meta.roles && !to.meta.roles.includes(user.role)) {
     return '/perfil';
   }

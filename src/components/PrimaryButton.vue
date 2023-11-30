@@ -1,7 +1,6 @@
 <script setup>
 import Loader from "../components/Loader.vue";
-
-const props = defineProps({
+defineProps({
   loading: {
     type: Boolean,
     default: false

@@ -11,7 +11,7 @@ export function useAuth() {
     services: [],
     userLoaded: false
   });
-  let unSubscribeAuth = () => {};
+  let unSubscribeAuth = () => { };
 
   onMounted(() => {
     unSubscribeAuth = subscribeToAuth(newUser => user.value = { ...newUser })

@@ -7,10 +7,18 @@ const props = defineProps({
     required: true,
   },
 });
+
+const toggle = () => {
+  props.notification.message = null;
+};
 </script>
 
 <template>
-  <div class="notification m-2 absolute top-0 right-0" role="alert" v-if="notification.message != null">
+  <div
+    class="notification m-2 absolute top-0 right-0"
+    role="alert"
+    v-if="notification.message != null"
+  >
     <div
       class="p-4 border rounded-md flex justify-between gap-3 items-center"
       :class="{
@@ -26,7 +34,7 @@ const props = defineProps({
       }"
     >
       <p>{{ notification.message }}</p>
-      <div v-html="ICONS[notification.type].html"></div>
+      <div v-html="ICONS[notification.type].html" @click="toggle"></div>
     </div>
   </div>
 </template>

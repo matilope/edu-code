@@ -12,19 +12,17 @@ const notification = ref({
 
 function setNotification(data) {
   notification.value = data;
+  if (notification.value.type == "success") {
+    setTimeout(() => {
+      notification.value.message = null;
+    }, 3000);
+  }
 }
 
 provide(notificationSymbol, {
   notification: readonly(notification),
   setNotification,
 });
-
-setTimeout(() => {
-  setNotification({
-    message: null,
-    type: "success",
-  });
-}, 2000);
 </script>
 
 <template>

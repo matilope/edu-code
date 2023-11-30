@@ -2,7 +2,7 @@
 import { numberToCurrency } from "../helpers/price.js";
 import { useRoute } from "vue-router";
 import { useUser } from "../composition/useUser";
-import Loader from "../components/Loader.vue";
+import UserLoader from "../components/UserLoader.vue";
 
 const route = useRoute();
 const { user, userLoading } = useUser(route.params.id);
@@ -145,7 +145,7 @@ const { user, userLoading } = useUser(route.params.id);
         </div>
       </template>
       <template v-else>
-        <Loader class="flex justify-center my-4" />
+        <UserLoader class="flex justify-center my-4" />
       </template>
     </div>
   </section>
