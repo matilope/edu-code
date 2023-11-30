@@ -3,6 +3,10 @@ import { addDoc, collection, onSnapshot, serverTimestamp, query, orderBy, getDoc
 
 const privateChatRefCache = {};
 
+/**
+ * @param {{senderId: string, receiverId: string, message: string}}
+ * @returns {Promise}
+ */
 export async function sendPrivateMessage({ senderId, receiverId, message }) {
   const privateChat = await getPrivateChat({ senderId, receiverId });
   const messagesRef = collection(db, `chats/${privateChat.id}/messages`);
@@ -14,6 +18,11 @@ export async function sendPrivateMessage({ senderId, receiverId, message }) {
   return true;
 }
 
+/**
+ * @param {senderId: string, receiverId: string}
+ * @param {() => {}} callback 
+ * @returns {import('firebase/auth').Unsubscribe}
+ */
 export async function subscribeToPrivateChat({ senderId, receiverId }, callback) {
   const privateChat = await getPrivateChat({ senderId, receiverId });
   const messagesRef = collection(db, `chats/${privateChat.id}/messages`);
@@ -34,6 +43,10 @@ export async function subscribeToPrivateChat({ senderId, receiverId }, callback)
   });
 }
 
+/**
+ * @param {senderId: string, receiverId: string}
+ * @returns {promise}
+ */
 export async function getPrivateChat({ senderId, receiverId }) {
   const cachedRef = getCache({ senderId, receiverId });
   if (cachedRef) return cachedRef;

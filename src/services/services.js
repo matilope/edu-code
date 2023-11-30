@@ -4,6 +4,10 @@ import { getFile, uploadFile, deleteFile } from './storage.js';
 
 const refService = collection(db, 'services');
 
+/**
+ * @param {{data: object}} data
+ * @returns {Promise}
+ */
 export async function saveService(data) {
   try {
     const document = await addDoc(refService, {
@@ -18,6 +22,11 @@ export async function saveService(data) {
   }
 }
 
+/**
+ * @param {{id: string}} id
+ * @param {{data: object}} data
+ * @returns {Promise}
+ */
 export async function editService(id, data) {
   //const title = data.title.split(" ").join("").split(".").join("");
   const path = `services/${id}/image`;
@@ -34,6 +43,10 @@ export async function editService(id, data) {
   }
 }
 
+/**
+ * @param {{id: string}} id
+ * @returns {Promise}
+ */
 export async function deleteService(id) {
   const refService = doc(db, 'services', id);
   const path = refService.path + "/image";
@@ -46,6 +59,10 @@ export async function deleteService(id) {
   }
 }
 
+/**
+ * @param {{id: string}} id
+ * @returns {Promise}
+ */
 export async function getServiceById(id) {
   try {
     const docSnapshot = await getDoc(doc(db, `services/${id}`));
@@ -72,6 +89,10 @@ export async function getServiceById(id) {
   }
 }
 
+/**
+ * @param {() => {}} callback
+ * @returns {Promise}
+ */
 export function subscribeToServices(callback) {
   return onSnapshot(query(refService, orderBy('created_at', 'desc')), (snapshot) => {
     const data = snapshot.docs.map(doc => {
